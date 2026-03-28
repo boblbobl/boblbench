@@ -1,15 +1,16 @@
 :root {
-  --desktop-blue: #0053ad;
+  --desktop-blue: #0057b8;
   --panel: #ffffff;
-  --panel-low: #cfcfcf;
-  --panel-shadow: #7c7c7c;
+  --panel-low: #d8d8d8;
+  --panel-shadow: #7a7a7a;
   --panel-deep: #000000;
   --ink: #000000;
   --red: #d1412b;
   --drawer-orange: #d8891d;
-  --drawer-orange-dark: #9e5f0f;
-  --drawer-cream: #f3efe4;
+  --drawer-orange-dark: #9a5b0f;
+  --drawer-cream: #f5f1e7;
   --window-blue: #0f4ca9;
+  --icon-shadow: #4e4e4e;
   font-family: Arial, Helvetica, sans-serif;
 }
 
@@ -62,15 +63,16 @@ button {
   display: grid;
   align-content: start;
   justify-content: start;
-  gap: 1.15rem;
-  padding: 1rem 0.7rem;
+  gap: 1.2rem;
+  padding: 1rem 0.75rem;
 }
 
-.desktop-icon {
+.desktop-icon,
+.file-icon {
   display: grid;
   justify-items: center;
   gap: 0.35rem;
-  width: 5.7rem;
+  width: 5.9rem;
   padding: 0.15rem;
   border: 0;
   background: transparent;
@@ -78,42 +80,102 @@ button {
   cursor: pointer;
 }
 
-.desktop-icon__label {
-  padding: 0 0.18rem;
-  font-size: 0.92rem;
-  line-height: 1.05;
+.file-icon {
+  color: var(--ink);
 }
 
-.desktop-icon__drawer {
+.desktop-icon__label,
+.file-icon__label {
+  padding: 0 0.18rem;
+  font-size: 0.9rem;
+  line-height: 1.05;
+  text-align: center;
+}
+
+.wb-icon {
   position: relative;
   display: block;
-  width: 3.8rem;
-  height: 2.9rem;
+  width: 44px;
+  height: 36px;
+  image-rendering: pixelated;
 }
 
-.drawer-lid,
-.drawer-box {
+.wb-icon--drawer .wb-icon__lid,
+.wb-icon--drawer .wb-icon__body,
+.wb-icon--drawer .wb-icon__slot,
+.wb-icon--file .wb-icon__sheet,
+.wb-icon--file .wb-icon__fold,
+.wb-icon--disk .wb-icon__disk,
+.wb-icon--disk .wb-icon__label {
   position: absolute;
   display: block;
-  border: 2px solid var(--panel-deep);
 }
 
-.drawer-lid {
-  left: 0.55rem;
-  top: 0.2rem;
-  width: 1.85rem;
-  height: 0.72rem;
+.wb-icon--drawer .wb-icon__lid {
+  left: 10px;
+  top: 2px;
+  width: 18px;
+  height: 8px;
   background: var(--drawer-orange);
-  box-shadow: inset 1px 1px 0 #f3be66;
+  border: 2px solid var(--panel-deep);
+  box-shadow: inset 2px 2px 0 #f4c36a;
 }
 
-.drawer-box {
-  left: 0.25rem;
-  right: 0.25rem;
-  bottom: 0.25rem;
-  height: 1.55rem;
+.wb-icon--drawer .wb-icon__body {
+  left: 4px;
+  top: 10px;
+  width: 34px;
+  height: 20px;
   background: var(--drawer-cream);
-  box-shadow: inset 2px 2px 0 #ffffff, inset -2px -2px 0 #a5a5a5;
+  border: 2px solid var(--panel-deep);
+  box-shadow: inset 2px 2px 0 #ffffff, inset -2px -2px 0 #a7a7a7;
+}
+
+.wb-icon--drawer .wb-icon__slot {
+  left: 14px;
+  top: 17px;
+  width: 14px;
+  height: 2px;
+  background: var(--drawer-orange-dark);
+  border-top: 2px solid var(--panel-deep);
+}
+
+.wb-icon--file .wb-icon__sheet {
+  left: 9px;
+  top: 4px;
+  width: 22px;
+  height: 26px;
+  background: #fff;
+  border: 2px solid var(--panel-deep);
+  box-shadow: inset -2px -2px 0 #b8b8b8;
+}
+
+.wb-icon--file .wb-icon__fold {
+  right: 11px;
+  top: 4px;
+  width: 0;
+  height: 0;
+  border-left: 8px solid transparent;
+  border-bottom: 8px solid #cfcfcf;
+}
+
+.wb-icon--disk .wb-icon__disk {
+  left: 8px;
+  top: 4px;
+  width: 26px;
+  height: 26px;
+  background: #fff;
+  border: 2px solid var(--panel-deep);
+  box-shadow: inset -2px -2px 0 #b8b8b8;
+}
+
+.wb-icon--disk .wb-icon__label {
+  left: 13px;
+  top: 8px;
+  width: 12px;
+  height: 5px;
+  background: var(--red);
+  border: 1px solid var(--panel-deep);
 }
 
 .window {
@@ -137,14 +199,7 @@ button {
   min-height: 1.55rem;
   padding: 0 0.18rem 0 0.3rem;
   color: #fff;
-  background:
-    repeating-linear-gradient(
-      90deg,
-      var(--window-blue) 0,
-      var(--window-blue) 3px,
-      #ffffff 3px,
-      #ffffff 4px
-    );
+  background: repeating-linear-gradient(90deg, var(--window-blue) 0, var(--window-blue) 3px, #ffffff 3px, #ffffff 4px);
   border-bottom: 1px solid var(--panel-deep);
   cursor: grab;
   user-select: none;
@@ -197,81 +252,24 @@ button {
   padding: 0.6rem;
 }
 
-.copy-block {
-  font-size: 0.93rem;
-  line-height: 1.35;
-}
-
 .icon-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(4.8rem, max-content));
+  grid-template-columns: repeat(auto-fit, minmax(5rem, max-content));
   gap: 1rem 1.2rem;
   align-items: start;
 }
 
-.mini-icon {
-  display: grid;
-  justify-items: center;
-  gap: 0.3rem;
+.copy-block {
+  font-size: 0.92rem;
+  line-height: 1.35;
 }
 
-.mini-icon__label {
-  max-width: 5rem;
-  font-size: 0.84rem;
-  text-align: center;
-  line-height: 1.05;
+.copy-block p {
+  margin: 0 0 0.8rem;
 }
 
-.mini-icon__art {
-  position: relative;
-  display: block;
-  width: 2.9rem;
-  height: 2.6rem;
-}
-
-.mini-icon--note .mini-icon__art::before {
-  content: "";
-  position: absolute;
-  inset: 0.2rem 0.45rem 0.15rem 0.45rem;
-  border: 1px solid var(--panel-deep);
-  background: #fff;
-  box-shadow: inset -1px -1px 0 var(--panel-shadow);
-}
-
-.mini-icon--note .mini-icon__art::after {
-  content: "";
-  position: absolute;
-  left: 0.7rem;
-  right: 0.75rem;
-  top: 0.75rem;
-  height: 0.85rem;
-  background: repeating-linear-gradient(
-    to bottom,
-    transparent 0,
-    transparent 2px,
-    var(--window-blue) 2px,
-    var(--window-blue) 3px
-  );
-}
-
-.mini-icon--disk .mini-icon__art::before {
-  content: "";
-  position: absolute;
-  inset: 0.25rem 0.55rem 0.2rem 0.55rem;
-  border: 1px solid var(--panel-deep);
-  background: #fff;
-  box-shadow: inset -1px -1px 0 var(--panel-shadow);
-}
-
-.mini-icon--disk .mini-icon__art::after {
-  content: "";
-  position: absolute;
-  left: 1rem;
-  top: 0.55rem;
-  width: 0.8rem;
-  height: 0.35rem;
-  background: var(--red);
-  border: 1px solid var(--panel-deep);
+.copy-block p:last-child {
+  margin-bottom: 0;
 }
 
 [hidden] {
