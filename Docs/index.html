@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>boblbench</title>
+    <meta
+      name="description"
+      content="A nostalgic desktop environment on the web — part blog, part playground."
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="desktop" id="desktop">
+      <header class="top-strip">
+        <div class="top-strip__left">
+          <span class="system-led" aria-hidden="true"></span>
+          <span class="brand-mark">boblbench</span>
+        </div>
+        <div class="top-strip__right">Workbench-inspired blog terminal</div>
+      </header>
+
+      <main class="desktop__surface">
+        <button class="desktop-icon" data-window="about">
+          <span class="desktop-icon__glyph desktop-icon__glyph--info"></span>
+          <span class="desktop-icon__label">About</span>
+        </button>
+
+        <button class="desktop-icon" data-window="journal">
+          <span class="desktop-icon__glyph desktop-icon__glyph--drawer"></span>
+          <span class="desktop-icon__label">Journal</span>
+        </button>
+
+        <button class="desktop-icon" data-window="projects">
+          <span class="desktop-icon__glyph desktop-icon__glyph--disk"></span>
+          <span class="desktop-icon__label">Projects</span>
+        </button>
+      </main>
+
+      <section class="window is-active" id="window-about" style="left: 7vw; top: 12vh; width: min(40rem, 88vw);">
+        <div class="window__titlebar" data-drag-handle>
+          <div class="window__bevel"></div>
+          <h1 class="window__title">boblbench:Workbench</h1>
+          <button class="window__close" data-close aria-label="Close window">×</button>
+        </div>
+        <div class="window__content">
+          <p>
+            This is the start of a browser-native desktop environment built as a public-facing blog.
+          </p>
+          <p>
+            The visual language now leans toward <strong>Amiga Workbench 1.0</strong>: muted teal backdrop,
+            blue title bars, orange accents, thick bevels, and icon-driven navigation.
+          </p>
+          <p>
+            The plan is simple: make it feel like booting into a strange little personal machine full of notes,
+            projects, experiments, and digital artifacts.
+          </p>
+        </div>
+      </section>
+
+      <section class="window" id="window-journal" hidden style="left: 22vw; top: 18vh; width: min(34rem, 84vw);">
+        <div class="window__titlebar" data-drag-handle>
+          <div class="window__bevel"></div>
+          <h2 class="window__title">RAM:Journal</h2>
+          <button class="window__close" data-close aria-label="Close window">×</button>
+        </div>
+        <div class="window__content">
+          <ul class="entry-list">
+            <li>
+              <strong>Boot log 01</strong><br />
+              Plain HTML, CSS, and JavaScript only. No frameworks. No abstraction tax.
+            </li>
+            <li>
+              <strong>Boot log 02</strong><br />
+              Windows open, close, stack, and drag around like a tiny fake operating system.
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="window" id="window-projects" hidden style="left: 15vw; top: 30vh; width: min(35rem, 84vw);">
+        <div class="window__titlebar" data-drag-handle>
+          <div class="window__bevel"></div>
+          <h2 class="window__title">DF0:Projects</h2>
+          <button class="window__close" data-close aria-label="Close window">×</button>
+        </div>
+        <div class="window__content">
+          <p>
+            This window can become the equivalent of a disk or drawer filled with prototypes, links, writing,
+            and experiments.
+          </p>
+          <p>
+            In a proper Workbench spirit, content should feel browsable rather than feed-like.
+          </p>
+        </div>
+      </section>
+    </div>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
