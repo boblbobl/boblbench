@@ -13,46 +13,17 @@
   <body>
     <div class="desktop" id="desktop">
       <header class="top-strip">
-        <div class="top-strip__brand">boblbench, Version 0.2</div>
-        <div class="top-strip__memory">383896 free memory</div>
+        <div class="top-strip__brand" id="brand-label">Amiga Workbench, Version boblbench</div>
+        <div class="top-strip__memory" id="memory-label">loading...</div>
       </header>
 
-      <main class="desktop__surface" id="desktop-surface">
-        <button class="desktop-icon" data-target="about-drawer">
-          <span class="wb-icon wb-icon--drawer" aria-hidden="true">
-            <span class="wb-icon__lid"></span>
-            <span class="wb-icon__body"></span>
-            <span class="wb-icon__slot"></span>
-          </span>
-          <span class="desktop-icon__label">About</span>
-        </button>
-
-        <button class="desktop-icon" data-target="journal-drawer">
-          <span class="wb-icon wb-icon--drawer" aria-hidden="true">
-            <span class="wb-icon__lid"></span>
-            <span class="wb-icon__body"></span>
-            <span class="wb-icon__slot"></span>
-          </span>
-          <span class="desktop-icon__label">Journal</span>
-        </button>
-
-        <button class="desktop-icon" data-target="projects-drawer">
-          <span class="wb-icon wb-icon--drawer" aria-hidden="true">
-            <span class="wb-icon__lid"></span>
-            <span class="wb-icon__body"></span>
-            <span class="wb-icon__slot"></span>
-          </span>
-          <span class="desktop-icon__label">Projects</span>
-        </button>
-      </main>
+      <main class="desktop__surface" id="desktop-surface"></main>
 
       <template id="window-template">
         <section class="window">
           <div class="window__titlebar" data-drag-handle>
             <div class="window__titletext"></div>
-            <div class="window__titletools">
-              <button class="window__close" data-close aria-label="Close window"></button>
-            </div>
+            <button class="window__close" data-close aria-label="Close window"></button>
           </div>
           <div class="window__content"></div>
         </section>

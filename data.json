@@ -1,0 +1,72 @@
+{
+  "desktop": {
+    "versionLabel": "Amiga Workbench, Version boblbench 0.3",
+    "memoryLabel": "383896 free memory",
+    "rootIcons": ["about-drawer", "journal-drawer", "projects-drawer"]
+  },
+  "nodes": {
+    "about-drawer": {
+      "type": "drawer",
+      "title": "About",
+      "toolbar": ["Workbench", "Open", "Parent"],
+      "children": ["about-file", "now-file"],
+      "defaultPosition": { "left": 40, "top": 52, "width": "min(29rem, 84vw)" }
+    },
+    "journal-drawer": {
+      "type": "drawer",
+      "title": "Journal",
+      "toolbar": ["Workbench", "Entries"],
+      "children": ["bootlog-file", "ideas-file"],
+      "defaultPosition": { "left": 120, "top": 100, "width": "min(29rem, 84vw)" }
+    },
+    "projects-drawer": {
+      "type": "drawer",
+      "title": "Projects",
+      "toolbar": ["Workbench", "Experiments"],
+      "children": ["desktop-file", "links-file", "writing-file"],
+      "defaultPosition": { "left": 220, "top": 86, "width": "min(29rem, 84vw)" }
+    },
+    "about-file": {
+      "type": "file",
+      "title": "About.info",
+      "defaultPosition": { "left": 86, "top": 84, "width": "min(28rem, 82vw)" },
+      "body": "<div class=\"window__body copy-block\"><p>boblbench is a personal site disguised as a tiny old computer.</p><p>The idea is to browse thoughts and projects as drawers, disks, and files instead of a normal scrolling blog feed.</p></div>"
+    },
+    "now-file": {
+      "type": "file",
+      "title": "Now.readme",
+      "defaultPosition": { "left": 150, "top": 130, "width": "min(28rem, 82vw)" },
+      "body": "<div class=\"window__body copy-block\"><p>Current mission: build a convincing Amiga Workbench-inspired shell using only HTML, CSS, and JavaScript.</p><p>Short term goal: get the icon language and drawer hierarchy feeling right before adding real content.</p></div>"
+    },
+    "bootlog-file": {
+      "type": "markdown",
+      "title": "Bootlog.md",
+      "defaultPosition": { "left": 190, "top": 122, "width": "min(36rem, 88vw)" },
+      "markdown": "# Bootlog\\n\\nA first pass at a **Workbench-inspired** web desktop.\\n\\n## Milestones\\n\\n- Static prototype established\\n- Visual language shifted toward Amiga Workbench 1.0\\n- Drawers and files now define the site structure\\n- Markdown viewer added as the first real application\\n\\n## Why markdown?\\n\\nBecause it gives the site a nice split between:\\n\\n1. old-school window chrome\\n2. modern readable writing\\n\\n> The desktop is the shell. Markdown is the content.\\n\\n### Tiny code sample\\n\\n```js\\nconst idea = 'browser-native desktop';\\nconsole.log(idea);\\n```\\n\\nVisit <https://github.com/boblbobl/boblbench> for the source."
+    },
+    "ideas-file": {
+      "type": "file",
+      "title": "Ideas.txt",
+      "defaultPosition": { "left": 240, "top": 160, "width": "min(28rem, 82vw)" },
+      "body": "<div class=\"window__body copy-block\"><p>Possible future additions:</p><p>- a startup chime and faux boot sequence</p><p>- icons that can be selected before opening</p><p>- a disk with archived years of writing</p></div>"
+    },
+    "desktop-file": {
+      "type": "file",
+      "title": "DesktopProject.doc",
+      "defaultPosition": { "left": 260, "top": 92, "width": "min(28rem, 82vw)" },
+      "body": "<div class=\"window__body copy-block\"><p>The desktop itself is the project: a nostalgic interface that still works as a readable public website.</p></div>"
+    },
+    "links-file": {
+      "type": "file",
+      "title": "Links.info",
+      "defaultPosition": { "left": 290, "top": 136, "width": "min(28rem, 82vw)" },
+      "body": "<div class=\"window__body copy-block\"><p>This can later become a curated set of internet shortcuts, references, and favorite corners of the web.</p></div>"
+    },
+    "writing-file": {
+      "type": "markdown",
+      "title": "Writing.md",
+      "defaultPosition": { "left": 320, "top": 176, "width": "min(36rem, 88vw)" },
+      "markdown": "# Writing\\n\\nWriting probably belongs in **year/month drawers** so older posts feel archived instead of endlessly streamed.\\n\\n## Structure idea\\n\\n- `Writing/2026/March/`\\n- `Writing/2025/`\\n- `Drafts/`\\n\\n### Notes\\n\\nThis first markdown app should eventually support:\\n\\n- fenced code blocks\\n- links\\n- lists\\n- blockquotes\\n- inline code"
+    }
+  }
+}

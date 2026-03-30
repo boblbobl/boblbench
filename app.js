@@ -1,115 +1,14 @@
 const desktop = document.getElementById('desktop');
 const desktopSurface = document.getElementById('desktop-surface');
 const windowTemplate = document.getElementById('window-template');
+const brandLabel = document.getElementById('brand-label');
+const memoryLabel = document.getElementById('memory-label');
 
 let topZ = 10;
 
 const openWindows = new Map();
 const windowState = new Map();
-
-const nodes = {
-  root: {
-    type: 'drawer',
-    title: 'Workbench',
-    children: ['about-drawer', 'journal-drawer', 'projects-drawer'],
-  },
-  'about-drawer': {
-    type: 'drawer',
-    title: 'About',
-    toolbar: ['Workbench', 'Open', 'Parent'],
-    children: ['about-file', 'now-file'],
-    defaultPosition: { left: 40, top: 52, width: 'min(29rem, 84vw)' },
-  },
-  'journal-drawer': {
-    type: 'drawer',
-    title: 'Journal',
-    children: ['bootlog-file', 'ideas-file'],
-    defaultPosition: { left: 120, top: 100, width: 'min(29rem, 84vw)' },
-  },
-  'projects-drawer': {
-    type: 'drawer',
-    title: 'Projects',
-    children: ['desktop-file', 'links-file', 'writing-file'],
-    defaultPosition: { left: 220, top: 86, width: 'min(29rem, 84vw)' },
-  },
-  'about-file': {
-    type: 'file',
-    title: 'About.info',
-    defaultPosition: { left: 86, top: 84, width: 'min(28rem, 82vw)' },
-    body: `
-      <div class="window__body copy-block">
-        <p>boblbench is a personal site disguised as a tiny old computer.</p>
-        <p>The idea is to browse thoughts and projects as drawers, disks, and files instead of a normal scrolling blog feed.</p>
-      </div>
-    `,
-  },
-  'now-file': {
-    type: 'file',
-    title: 'Now.readme',
-    defaultPosition: { left: 150, top: 130, width: 'min(28rem, 82vw)' },
-    body: `
-      <div class="window__body copy-block">
-        <p>Current mission: build a convincing Amiga Workbench-inspired shell using only HTML, CSS, and JavaScript.</p>
-        <p>Short term goal: get the icon language and drawer hierarchy feeling right before adding real content.</p>
-      </div>
-    `,
-  },
-  'bootlog-file': {
-    type: 'file',
-    title: 'Bootlog.001',
-    defaultPosition: { left: 190, top: 122, width: 'min(28rem, 82vw)' },
-    body: `
-      <div class="window__body copy-block">
-        <p>Bootlog 001: static prototype established.</p>
-        <p>Bootlog 002: visual language shifted toward Amiga Workbench 1.0.</p>
-        <p>Bootlog 003: drawers and files now define the site structure.</p>
-      </div>
-    `,
-  },
-  'ideas-file': {
-    type: 'file',
-    title: 'Ideas.txt',
-    defaultPosition: { left: 240, top: 160, width: 'min(28rem, 82vw)' },
-    body: `
-      <div class="window__body copy-block">
-        <p>Possible future additions:</p>
-        <p>- a startup chime and faux boot sequence</p>
-        <p>- icons that can be selected before opening</p>
-        <p>- a disk with archived years of writing</p>
-      </div>
-    `,
-  },
-  'desktop-file': {
-    type: 'file',
-    title: 'DesktopProject.doc',
-    defaultPosition: { left: 260, top: 92, width: 'min(28rem, 82vw)' },
-    body: `
-      <div class="window__body copy-block">
-        <p>The desktop itself is the project: a nostalgic interface that still works as a readable public website.</p>
-      </div>
-    `,
-  },
-  'links-file': {
-    type: 'file',
-    title: 'Links.info',
-    defaultPosition: { left: 290, top: 136, width: 'min(28rem, 82vw)' },
-    body: `
-      <div class="window__body copy-block">
-        <p>This can later become a curated set of internet shortcuts, references, and favorite corners of the web.</p>
-      </div>
-    `,
-  },
-  'writing-file': {
-    type: 'file',
-    title: 'Writing.readme',
-    defaultPosition: { left: 320, top: 176, width: 'min(28rem, 82vw)' },
-    body: `
-      <div class="window__body copy-block">
-        <p>Writing should probably live as files inside year/month drawers, so old posts feel archived instead of endlessly streamed.</p>
-      </div>
-    `,
-  },
-};
+let nodes = {};
 
 function focusWindow(windowEl) {
   topZ += 1;
@@ -138,27 +37,23 @@ function applyWindowPlacement(nodeId, windowEl) {
   windowEl.style.width = placement.width || 'min(28rem, 82vw)';
 }
 
-function makeIcon(nodeId) {
+function iconMarkup(type) {
+  if (type === 'drawer') {
+    return '<span class="wb-icon wb-icon--drawer" aria-hidden="true"><span class="wb-icon__lid"></span><span class="wb-icon__body"></span><span class="wb-icon__slot"></span></span>';
+  }
+  return '<span class="wb-icon wb-icon--file" aria-hidden="true"><span class="wb-icon__sheet"></span><span class="wb-icon__fold"></span></span>';
+}
+
+function labelFromTitle(title) {
+  return title.replace(/\.(info|txt|doc|readme|md|001)$/i, '');
+}
+
+function makeIcon(nodeId, className = 'file-icon') {
   const node = nodes[nodeId];
   const button = document.createElement('button');
-  button.className = 'file-icon';
+  button.className = className;
   button.dataset.target = nodeId;
-
-  const art = document.createElement('span');
-  art.className = `wb-icon wb-icon--${node.type === 'drawer' ? 'drawer' : 'file'}`;
-  art.setAttribute('aria-hidden', 'true');
-
-  if (node.type === 'drawer') {
-    art.innerHTML = '<span class="wb-icon__lid"></span><span class="wb-icon__body"></span><span class="wb-icon__slot"></span>';
-  } else {
-    art.innerHTML = '<span class="wb-icon__sheet"></span><span class="wb-icon__fold"></span>';
-  }
-
-  const label = document.createElement('span');
-  label.className = 'file-icon__label';
-  label.textContent = node.title.replace(/\.(info|txt|doc|readme|001)$/i, '');
-
-  button.append(art, label);
+  button.innerHTML = `${iconMarkup(node.type === 'drawer' ? 'drawer' : 'file')}<span class="${className}__label">${labelFromTitle(node.title)}</span>`;
   return button;
 }
 
@@ -178,7 +73,7 @@ function bindWindow(nodeId, windowEl) {
   if (!handle) return;
 
   handle.addEventListener('pointerdown', (event) => {
-    if (event.target instanceof HTMLElement && event.target.closest('button')) return;
+    if (event.target instanceof HTMLElement && event.target.closest('button, select')) return;
 
     focusWindow(windowEl);
 
@@ -216,9 +111,9 @@ function buildDrawerWindow(nodeId) {
 
   title.textContent = node.title;
   content.innerHTML = `
-    ${node.toolbar?.length ? `<div class="window__toolbar">
-      ${node.toolbar.map((item) => `<button class="toolbar-button">${item}</button>`).join('')}
-    </div>` : ''}
+    <div class="window__toolbar">
+      ${(node.toolbar || ['Workbench']).map((item) => `<button class="toolbar-button" type="button">${item}</button>`).join('')}
+    </div>
     <div class="window__body icon-grid"></div>
   `;
 
@@ -229,6 +124,157 @@ function buildDrawerWindow(nodeId) {
   desktop.appendChild(windowEl);
   openWindows.set(nodeId, windowEl);
   bindWindow(nodeId, windowEl);
+  focusWindow(windowEl);
+}
+
+function parseInlineMarkdown(text) {
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/`([^`]+)`/g, '<code>$1</code>')
+    .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*([^*]+)\*/g, '<em>$1</em>')
+    .replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, '<a href="$2" target="_blank" rel="noreferrer">$1</a>')
+    .replace(/&lt;(https?:\/\/[^\s]+)&gt;/g, '<a href="$1" target="_blank" rel="noreferrer">$1</a>');
+}
+
+function renderMarkdown(markdown) {
+  const lines = markdown.replace(/\r\n/g, '\n').split('\n');
+  const html = [];
+  let paragraph = [];
+  let listItems = [];
+  let codeLines = [];
+  let inCodeBlock = false;
+
+  const flushParagraph = () => {
+    if (!paragraph.length) return;
+    html.push(`<p>${parseInlineMarkdown(paragraph.join(' '))}</p>`);
+    paragraph = [];
+  };
+
+  const flushList = () => {
+    if (!listItems.length) return;
+    html.push(`<ul>${listItems.map((item) => `<li>${parseInlineMarkdown(item)}</li>`).join('')}</ul>`);
+    listItems = [];
+  };
+
+  const flushCode = () => {
+    if (!codeLines.length) return;
+    const code = codeLines.join('\n').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    html.push(`<pre><code>${code}</code></pre>`);
+    codeLines = [];
+  };
+
+  for (const line of lines) {
+    if (line.startsWith('```')) {
+      flushParagraph();
+      flushList();
+      if (inCodeBlock) {
+        flushCode();
+        inCodeBlock = false;
+      } else {
+        inCodeBlock = true;
+      }
+      continue;
+    }
+
+    if (inCodeBlock) {
+      codeLines.push(line);
+      continue;
+    }
+
+    if (!line.trim()) {
+      flushParagraph();
+      flushList();
+      continue;
+    }
+
+    const heading = line.match(/^(#{1,6})\s+(.*)$/);
+    if (heading) {
+      flushParagraph();
+      flushList();
+      const level = heading[1].length;
+      html.push(`<h${level}>${parseInlineMarkdown(heading[2])}</h${level}>`);
+      continue;
+    }
+
+    const quote = line.match(/^>\s?(.*)$/);
+    if (quote) {
+      flushParagraph();
+      flushList();
+      html.push(`<blockquote><p>${parseInlineMarkdown(quote[1])}</p></blockquote>`);
+      continue;
+    }
+
+    const list = line.match(/^[-*]\s+(.*)$/) || line.match(/^\d+\.\s+(.*)$/);
+    if (list) {
+      flushParagraph();
+      listItems.push(list[1]);
+      continue;
+    }
+
+    paragraph.push(line.trim());
+  }
+
+  flushParagraph();
+  flushList();
+  flushCode();
+
+  return html.join('');
+}
+
+function attachMarkdownViewerControls(windowEl, nodeId) {
+  const viewport = windowEl.querySelector('[data-markdown-viewport]');
+  const fontSizeSelect = windowEl.querySelector('[data-markdown-font-size]');
+  const lineSpacingSelect = windowEl.querySelector('[data-markdown-line-spacing]');
+
+  const sync = () => {
+    viewport.style.setProperty('--viewer-font-size', fontSizeSelect.value);
+    viewport.style.setProperty('--viewer-line-height', lineSpacingSelect.value);
+    saveWindowState(nodeId, windowEl);
+  };
+
+  fontSizeSelect.addEventListener('change', sync);
+  lineSpacingSelect.addEventListener('change', sync);
+  sync();
+}
+
+function buildMarkdownWindow(nodeId) {
+  const node = nodes[nodeId];
+  const fragment = windowTemplate.content.cloneNode(true);
+  const windowEl = fragment.querySelector('.window');
+  const title = fragment.querySelector('.window__titletext');
+  const content = fragment.querySelector('.window__content');
+
+  title.textContent = node.title;
+  content.innerHTML = `
+    <div class="window__toolbar window__toolbar--markdown">
+      <label class="toolbar-field">Font size
+        <select class="toolbar-select" data-markdown-font-size>
+          <option value="14px">Small</option>
+          <option value="16px" selected>Medium</option>
+          <option value="18px">Large</option>
+        </select>
+      </label>
+      <label class="toolbar-field">Line spacing
+        <select class="toolbar-select" data-markdown-line-spacing>
+          <option value="1.35">Tight</option>
+          <option value="1.55" selected>Normal</option>
+          <option value="1.8">Loose</option>
+        </select>
+      </label>
+    </div>
+    <div class="window__body markdown-viewer" data-markdown-viewport>
+      ${renderMarkdown(node.markdown || '')}
+    </div>
+  `;
+
+  applyWindowPlacement(nodeId, windowEl);
+  desktop.appendChild(windowEl);
+  openWindows.set(nodeId, windowEl);
+  bindWindow(nodeId, windowEl);
+  attachMarkdownViewerControls(windowEl, nodeId);
   focusWindow(windowEl);
 }
 
@@ -260,10 +306,28 @@ function openNode(nodeId) {
   if (!node) return;
   if (node.type === 'drawer') buildDrawerWindow(nodeId);
   if (node.type === 'file') buildFileWindow(nodeId);
+  if (node.type === 'markdown') buildMarkdownWindow(nodeId);
+}
+
+function renderDesktop(rootIcons) {
+  desktopSurface.innerHTML = '';
+  rootIcons.forEach((nodeId) => {
+    desktopSurface.appendChild(makeIcon(nodeId, 'desktop-icon'));
+  });
+}
+
+async function init() {
+  const response = await fetch('./data.json');
+  const data = await response.json();
+  nodes = data.nodes || {};
+  brandLabel.textContent = data.desktop?.versionLabel || 'Amiga Workbench, Version boblbench';
+  memoryLabel.textContent = data.desktop?.memoryLabel || '';
+  renderDesktop(data.desktop?.rootIcons || []);
+  openNode('about-drawer');
 }
 
 desktopSurface.addEventListener('click', (event) => {
-  const target = event.target.closest('[data-target]');
+  const target = event.target.closest('.desktop-icon[data-target]');
   if (!target) return;
   openNode(target.dataset.target);
 });
@@ -274,4 +338,6 @@ desktop.addEventListener('click', (event) => {
   openNode(target.dataset.target);
 });
 
-openNode('about-drawer');
+init().catch((error) => {
+  console.error('Failed to initialize desktop', error);
+});
