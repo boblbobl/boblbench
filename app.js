@@ -23,14 +23,12 @@ const nodes = {
   'journal-drawer': {
     type: 'drawer',
     title: 'Journal',
-    toolbar: ['Workbench', 'Entries'],
     children: ['bootlog-file', 'ideas-file'],
     defaultPosition: { left: 120, top: 100, width: 'min(29rem, 84vw)' },
   },
   'projects-drawer': {
     type: 'drawer',
     title: 'Projects',
-    toolbar: ['Workbench', 'Experiments'],
     children: ['desktop-file', 'links-file', 'writing-file'],
     defaultPosition: { left: 220, top: 86, width: 'min(29rem, 84vw)' },
   },
@@ -218,9 +216,9 @@ function buildDrawerWindow(nodeId) {
 
   title.textContent = node.title;
   content.innerHTML = `
-    <div class="window__toolbar">
-      ${(node.toolbar || ['Workbench']).map((item) => `<button class="toolbar-button">${item}</button>`).join('')}
-    </div>
+    ${node.toolbar?.length ? `<div class="window__toolbar">
+      ${node.toolbar.map((item) => `<button class="toolbar-button">${item}</button>`).join('')}
+    </div>` : ''}
     <div class="window__body icon-grid"></div>
   `;
 

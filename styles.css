@@ -47,16 +47,23 @@ button {
   justify-content: space-between;
   gap: 1rem;
   min-height: 1.6rem;
-  padding: 0.15rem 0.4rem;
-  background: #fff;
-  border-bottom: 1px solid var(--panel-deep);
+
+  background: repeating-linear-gradient(#ffffff,#ffffff 4px,var(--window-blue) 4px,var(--window-blue) 9px);
+  border-left: 5px solid #fff;
+  border-right: 5px solid #fff;
+
+  color: var(--window-blue);
+
   font-size: 0.92rem;
-  line-height: 1;
+  line-height: 1.2;
+  min-height: 1.38rem;
 }
 
 .top-strip__brand,
 .top-strip__memory {
   white-space: nowrap;
+  background: #fff;
+  padding: 0 0.50rem;
 }
 
 .desktop__surface {
@@ -90,6 +97,7 @@ button {
   font-size: 0.9rem;
   line-height: 1.05;
   text-align: center;
+  color: #fff
 }
 
 .wb-icon {
@@ -183,7 +191,7 @@ button {
   min-width: 18rem;
   max-width: 92vw;
   background: var(--panel);
-  border: 1px solid var(--panel-deep);
+  border: 1px solid #fff;
   box-shadow: 2px 2px 0 var(--panel-deep);
 }
 
@@ -196,11 +204,11 @@ button {
   grid-template-columns: 1fr auto;
   align-items: center;
   gap: 0.4rem;
-  min-height: 1.55rem;
-  padding: 0 0.18rem 0 0.3rem;
+  min-height: 1.38rem;
   color: #fff;
-  background: repeating-linear-gradient(90deg, var(--window-blue) 0, var(--window-blue) 3px, #ffffff 3px, #ffffff 4px);
-  border-bottom: 1px solid var(--panel-deep);
+  background: repeating-linear-gradient(#ffffff,#ffffff 4px,var(--window-blue) 4px,var(--window-blue) 9px);
+  border-left: 5px solid #fff;
+  border-right: 5px solid #fff;
   cursor: grab;
   user-select: none;
 }
@@ -212,11 +220,18 @@ button {
 .window__titletext {
   display: inline-block;
   width: fit-content;
-  padding: 0 0.28rem;
-  color: #fff;
-  background: var(--window-blue);
+  padding: 0 0.50rem 0 0.28rem;
+  background: #fff;
+  color: var(--window-blue);
   font-size: 0.92rem;
   line-height: 1.2;
+}
+
+.window__titletools {
+  display: flex;
+  gap: 0.35rem;
+  padding-left: 0.3rem;
+  background: #fff;
 }
 
 .window__close {
@@ -230,7 +245,7 @@ button {
 }
 
 .window__content {
-  background: #fff;
+  background: var(--desktop-blue);
 }
 
 .window__toolbar {
@@ -238,6 +253,7 @@ button {
   gap: 0.35rem;
   padding: 0.3rem;
   border-bottom: 1px solid var(--panel-deep);
+  background: var(--panel-low);
 }
 
 .toolbar-button {
