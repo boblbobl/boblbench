@@ -1,3 +1,5 @@
+import { renderMarkdown, attachMarkdownViewerControls } from './markdown-viewer.js';
+
 const desktop = document.getElementById('desktop');
 const desktopSurface = document.getElementById('desktop-surface');
 const windowTemplate = document.getElementById('window-template');
@@ -108,18 +110,12 @@ function buildDrawerWindow(nodeId) {
   const windowEl = fragment.querySelector('.window');
   const title = fragment.querySelector('.window__titletext');
   const content = fragment.querySelector('.window__content');
-  const toolbarItems = Array.isArray(node.toolbar) ? node.toolbar.filter(Boolean) : [];
-  const toolbarMarkup = toolbarItems.length
-    ? `
-      <div class="window__toolbar">
-        ${toolbarItems.map((item) => `<button class="toolbar-button" type="button">${item}</button>`).join('')}
-      </div>
-    `
-    : '';
 
   title.textContent = node.title;
   content.innerHTML = `
-    ${toolbarMarkup}
+    <div class="window__toolbar">
+      ${(node.toolbar || ['Workbench']).map((item) => `<button class="toolbar-button" type="button">${item}</button>`).join('')}
+    </div>
     <div class="window__body icon-grid"></div>
   `;
 
@@ -133,120 +129,15 @@ function buildDrawerWindow(nodeId) {
   focusWindow(windowEl);
 }
 
-function parseInlineMarkdown(text) {
-  return text
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/`([^`]+)`/g, '<code>$1</code>')
-    .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
-    .replace(/\*([^*]+)\*/g, '<em>$1</em>')
-    .replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, '<a href="$2" target="_blank" rel="noreferrer">$1</a>')
-    .replace(/&lt;(https?:\/\/[^\s]+)&gt;/g, '<a href="$1" target="_blank" rel="noreferrer">$1</a>');
-}
-
-function renderMarkdown(markdown) {
-  const lines = markdown.replace(/\r\n/g, '\n').split('\n');
-  const html = [];
-  let paragraph = [];
-  let listItems = [];
-  let codeLines = [];
-  let inCodeBlock = false;
-
-  const flushParagraph = () => {
-    if (!paragraph.length) return;
-    html.push(`<p>${parseInlineMarkdown(paragraph.join(' '))}</p>`);
-    paragraph = [];
-  };
-
-  const flushList = () => {
-    if (!listItems.length) return;
-    html.push(`<ul>${listItems.map((item) => `<li>${parseInlineMarkdown(item)}</li>`).join('')}</ul>`);
-    listItems = [];
-  };
-
-  const flushCode = () => {
-    if (!codeLines.length) return;
-    const code = codeLines.join('\n').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-    html.push(`<pre><code>${code}</code></pre>`);
-    codeLines = [];
-  };
-
-  for (const line of lines) {
-    if (line.startsWith('```')) {
-      flushParagraph();
-      flushList();
-      if (inCodeBlock) {
-        flushCode();
-        inCodeBlock = false;
-      } else {
-        inCodeBlock = true;
-      }
-      continue;
-    }
-
-    if (inCodeBlock) {
-      codeLines.push(line);
-      continue;
-    }
-
-    if (!line.trim()) {
-      flushParagraph();
-      flushList();
-      continue;
-    }
-
-    const heading = line.match(/^(#{1,6})\s+(.*)$/);
-    if (heading) {
-      flushParagraph();
-      flushList();
-      const level = heading[1].length;
-      html.push(`<h${level}>${parseInlineMarkdown(heading[2])}</h${level}>`);
-      continue;
-    }
-
-    const quote = line.match(/^>\s?(.*)$/);
-    if (quote) {
-      flushParagraph();
-      flushList();
-      html.push(`<blockquote><p>${parseInlineMarkdown(quote[1])}</p></blockquote>`);
-      continue;
-    }
-
-    const list = line.match(/^[-*]\s+(.*)$/) || line.match(/^\d+\.\s+(.*)$/);
-    if (list) {
-      flushParagraph();
-      listItems.push(list[1]);
-      continue;
-    }
-
-    paragraph.push(line.trim());
+async function loadMarkdownSource(node) {
+  const response = await fetch(node.src);
+  if (!response.ok) {
+    throw new Error(`Unable to load markdown source: ${node.src}`);
   }
-
-  flushParagraph();
-  flushList();
-  flushCode();
-
-  return html.join('');
+  return response.text();
 }
 
-function attachMarkdownViewerControls(windowEl, nodeId) {
-  const viewport = windowEl.querySelector('[data-markdown-viewport]');
-  const fontSizeSelect = windowEl.querySelector('[data-markdown-font-size]');
-  const lineSpacingSelect = windowEl.querySelector('[data-markdown-line-spacing]');
-
-  const sync = () => {
-    viewport.style.setProperty('--viewer-font-size', fontSizeSelect.value);
-    viewport.style.setProperty('--viewer-line-height', lineSpacingSelect.value);
-    saveWindowState(nodeId, windowEl);
-  };
-
-  fontSizeSelect.addEventListener('change', sync);
-  lineSpacingSelect.addEventListener('change', sync);
-  sync();
-}
-
-function buildMarkdownWindow(nodeId) {
+async function buildMarkdownWindow(nodeId) {
   const node = nodes[nodeId];
   const fragment = windowTemplate.content.cloneNode(true);
   const windowEl = fragment.querySelector('.window');
@@ -272,7 +163,7 @@ function buildMarkdownWindow(nodeId) {
       </label>
     </div>
     <div class="window__body markdown-viewer" data-markdown-viewport>
-      ${renderMarkdown(node.markdown || '')}
+      <p>Loading markdown…</p>
     </div>
   `;
 
@@ -280,8 +171,17 @@ function buildMarkdownWindow(nodeId) {
   desktop.appendChild(windowEl);
   openWindows.set(nodeId, windowEl);
   bindWindow(nodeId, windowEl);
-  attachMarkdownViewerControls(windowEl, nodeId);
+  attachMarkdownViewerControls(windowEl);
   focusWindow(windowEl);
+
+  try {
+    const markdown = await loadMarkdownSource(node);
+    const viewport = windowEl.querySelector('[data-markdown-viewport]');
+    viewport.innerHTML = renderMarkdown(markdown);
+  } catch (error) {
+    const viewport = windowEl.querySelector('[data-markdown-viewport]');
+    viewport.innerHTML = `<p>Failed to load markdown.</p><p><code>${error.message}</code></p>`;
+  }
 }
 
 function buildFileWindow(nodeId) {
@@ -301,7 +201,7 @@ function buildFileWindow(nodeId) {
   focusWindow(windowEl);
 }
 
-function openNode(nodeId) {
+async function openNode(nodeId) {
   const existingWindow = openWindows.get(nodeId);
   if (existingWindow) {
     focusWindow(existingWindow);
@@ -312,7 +212,7 @@ function openNode(nodeId) {
   if (!node) return;
   if (node.type === 'drawer') buildDrawerWindow(nodeId);
   if (node.type === 'file') buildFileWindow(nodeId);
-  if (node.type === 'markdown') buildMarkdownWindow(nodeId);
+  if (node.type === 'markdown') await buildMarkdownWindow(nodeId);
 }
 
 function renderDesktop(rootIcons) {
@@ -329,19 +229,19 @@ async function init() {
   brandLabel.textContent = data.desktop?.versionLabel || 'Amiga Workbench, Version boblbench';
   memoryLabel.textContent = data.desktop?.memoryLabel || '';
   renderDesktop(data.desktop?.rootIcons || []);
-  openNode('about-drawer');
+  await openNode('about-drawer');
 }
 
-desktopSurface.addEventListener('click', (event) => {
+desktopSurface.addEventListener('click', async (event) => {
   const target = event.target.closest('.desktop-icon[data-target]');
   if (!target) return;
-  openNode(target.dataset.target);
+  await openNode(target.dataset.target);
 });
 
-desktop.addEventListener('click', (event) => {
+desktop.addEventListener('click', async (event) => {
   const target = event.target.closest('.file-icon[data-target]');
   if (!target) return;
-  openNode(target.dataset.target);
+  await openNode(target.dataset.target);
 });
 
 init().catch((error) => {

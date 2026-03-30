@@ -8,6 +8,7 @@
     "about-drawer": {
       "type": "drawer",
       "title": "About",
+      "toolbar": ["Workbench", "Open", "Parent"],
       "children": ["about-file", "now-file"],
       "defaultPosition": { "left": 40, "top": 52, "width": "min(29rem, 84vw)" }
     },
@@ -41,7 +42,7 @@
       "type": "markdown",
       "title": "Bootlog.md",
       "defaultPosition": { "left": 190, "top": 122, "width": "min(36rem, 88vw)" },
-      "markdown": "# Bootlog\\n\\nA first pass at a **Workbench-inspired** web desktop.\\n\\n## Milestones\\n\\n- Static prototype established\\n- Visual language shifted toward Amiga Workbench 1.0\\n- Drawers and files now define the site structure\\n- Markdown viewer added as the first real application\\n\\n## Why markdown?\\n\\nBecause it gives the site a nice split between:\\n\\n1. old-school window chrome\\n2. modern readable writing\\n\\n> The desktop is the shell. Markdown is the content.\\n\\n### Tiny code sample\\n\\n```js\\nconst idea = 'browser-native desktop';\\nconsole.log(idea);\\n```\\n\\nVisit <https://github.com/boblbobl/boblbench> for the source."
+      "src": "./content/journal/bootlog.md"
     },
     "ideas-file": {
       "type": "file",
@@ -65,7 +66,7 @@
       "type": "markdown",
       "title": "Writing.md",
       "defaultPosition": { "left": 320, "top": 176, "width": "min(36rem, 88vw)" },
-      "markdown": "# Writing\\n\\nWriting probably belongs in **year/month drawers** so older posts feel archived instead of endlessly streamed.\\n\\n## Structure idea\\n\\n- `Writing/2026/March/`\\n- `Writing/2025/`\\n- `Drafts/`\\n\\n### Notes\\n\\nThis first markdown app should eventually support:\\n\\n- fenced code blocks\\n- links\\n- lists\\n- blockquotes\\n- inline code"
+      "src": "./content/writing/writing.md"
     }
   }
 }
