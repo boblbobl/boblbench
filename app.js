@@ -108,12 +108,18 @@ function buildDrawerWindow(nodeId) {
   const windowEl = fragment.querySelector('.window');
   const title = fragment.querySelector('.window__titletext');
   const content = fragment.querySelector('.window__content');
+  const toolbarItems = Array.isArray(node.toolbar) ? node.toolbar.filter(Boolean) : [];
+  const toolbarMarkup = toolbarItems.length
+    ? `
+      <div class="window__toolbar">
+        ${toolbarItems.map((item) => `<button class="toolbar-button" type="button">${item}</button>`).join('')}
+      </div>
+    `
+    : '';
 
   title.textContent = node.title;
   content.innerHTML = `
-    <div class="window__toolbar">
-      ${(node.toolbar || ['Workbench']).map((item) => `<button class="toolbar-button" type="button">${item}</button>`).join('')}
-    </div>
+    ${toolbarMarkup}
     <div class="window__body icon-grid"></div>
   `;
 

@@ -8,7 +8,6 @@
     "about-drawer": {
       "type": "drawer",
       "title": "About",
-      "toolbar": ["Workbench", "Open", "Parent"],
       "children": ["about-file", "now-file"],
       "defaultPosition": { "left": 40, "top": 52, "width": "min(29rem, 84vw)" }
     },
