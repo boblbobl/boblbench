@@ -1,6 +1,6 @@
 {
   "desktop": {
-    "versionLabel": "Amiga Workbench, Version boblbench 0.3",
+    "versionLabel": "boblbench, Version 0.3",
     "memoryLabel": "383896 free memory",
     "rootIcons": ["about-drawer", "journal-drawer", "projects-drawer"]
   },

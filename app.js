@@ -226,10 +226,10 @@ async function init() {
   const response = await fetch('./data.json');
   const data = await response.json();
   nodes = data.nodes || {};
-  brandLabel.textContent = data.desktop?.versionLabel || 'Amiga Workbench, Version boblbench';
-  memoryLabel.textContent = data.desktop?.memoryLabel || '';
+  brandLabel.textContent = data.desktop?.versionLabel;
+  memoryLabel.textContent = data.desktop?.memoryLabel;
   renderDesktop(data.desktop?.rootIcons || []);
-  await openNode('about-drawer');
+  await openNode('writing-file');
 }
 
 desktopSurface.addEventListener('click', async (event) => {
