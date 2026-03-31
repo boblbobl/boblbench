@@ -7,7 +7,7 @@
   "nodes": {
     "about-drawer": {
       "type": "drawer",
-      "icon": "drawer",
+      "icon": "sprite-drawer",
       "title": "About",
       "toolbar": ["Workbench", "Open", "Parent"],
       "children": ["about-file", "now-file"],
@@ -15,7 +15,7 @@
     },
     "journal-drawer": {
       "type": "drawer",
-      "icon": "drawer",
+      "icon": "sprite-drawer",
       "title": "Journal",
       "toolbar": ["Workbench", "Entries"],
       "children": ["bootlog-file", "ideas-file"],
@@ -23,7 +23,7 @@
     },
     "projects-drawer": {
       "type": "drawer",
-      "icon": "drawer",
+      "icon": "sprite-drawer",
       "title": "Projects",
       "toolbar": ["Workbench", "Experiments"],
       "children": ["desktop-file", "links-file", "writing-file"],
@@ -52,14 +52,14 @@
     },
     "ideas-file": {
       "type": "file",
-      "icon": "file",
+      "icon": "trash",
       "title": "Ideas.txt",
       "defaultPosition": { "left": 240, "top": 160, "width": "min(28rem, 82vw)" },
       "body": "<div class=\"window__body copy-block\"><p>Possible future additions:</p><p>- a startup chime and faux boot sequence</p><p>- icons that can be selected before opening</p><p>- a disk with archived years of writing</p></div>"
     },
     "desktop-file": {
       "type": "file",
-      "icon": "disk",
+      "icon": "sprite-disk",
       "title": "DesktopProject.doc",
       "defaultPosition": { "left": 260, "top": 92, "width": "min(28rem, 82vw)" },
       "body": "<div class=\"window__body copy-block\"><p>The desktop itself is the project: a nostalgic interface that still works as a readable public website.</p></div>"

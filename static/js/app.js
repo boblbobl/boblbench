@@ -54,6 +54,11 @@ function iconMarkup(iconType) {
     return '<span class="wb-icon wb-icon--disk" aria-hidden="true"><span class="wb-icon__disk"></span><span class="wb-icon__label"></span></span>';
   }
 
+  const spriteIcons = new Set(['sprite-drawer', 'sprite-disk', 'trash']);
+  if (spriteIcons.has(iconType)) {
+    return `<span class="wb-icon wb-icon--sprite wb-icon--${iconType}" aria-hidden="true"></span>`;
+  }
+
   return '<span class="wb-icon wb-icon--file" aria-hidden="true"><span class="wb-icon__sheet"></span><span class="wb-icon__fold"></span></span>';
 }
 
@@ -234,7 +239,7 @@ function renderDesktop(rootIcons) {
 }
 
 async function init() {
-  const response = await fetch('/content/data.json');
+  const response = await fetch('./content/data.json');
   const data = await response.json();
   nodes = data.nodes || {};
   brandLabel.textContent = data.desktop?.versionLabel;
