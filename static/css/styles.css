@@ -21,7 +21,7 @@
 
 @font-face {
   font-family: ChicagoFLFRegular; /* set name */
-  src: url(static/fonts/chicago/ChicagoFLF.ttf); /* url of the font */
+  src: url(../fonts/system/ChicagoFLF.ttf); /* url of the font */
 }
 
 html,

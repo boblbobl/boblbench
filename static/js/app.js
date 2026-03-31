@@ -234,7 +234,7 @@ function renderDesktop(rootIcons) {
 }
 
 async function init() {
-  const response = await fetch('./data.json');
+  const response = await fetch('/content/data.json');
   const data = await response.json();
   nodes = data.nodes || {};
   brandLabel.textContent = data.desktop?.versionLabel;
