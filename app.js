@@ -39,10 +39,21 @@ function applyWindowPlacement(nodeId, windowEl) {
   windowEl.style.width = placement.width || 'min(28rem, 82vw)';
 }
 
-function iconMarkup(type) {
-  if (type === 'drawer') {
+function getIconType(node) {
+  if (node.icon) return node.icon;
+  if (node.type === 'drawer') return 'drawer';
+  return 'file';
+}
+
+function iconMarkup(iconType) {
+  if (iconType === 'drawer') {
     return '<span class="wb-icon wb-icon--drawer" aria-hidden="true"><span class="wb-icon__lid"></span><span class="wb-icon__body"></span><span class="wb-icon__slot"></span></span>';
   }
+
+  if (iconType === 'disk') {
+    return '<span class="wb-icon wb-icon--disk" aria-hidden="true"><span class="wb-icon__disk"></span><span class="wb-icon__label"></span></span>';
+  }
+
   return '<span class="wb-icon wb-icon--file" aria-hidden="true"><span class="wb-icon__sheet"></span><span class="wb-icon__fold"></span></span>';
 }
 
@@ -55,7 +66,7 @@ function makeIcon(nodeId, className = 'file-icon') {
   const button = document.createElement('button');
   button.className = className;
   button.dataset.target = nodeId;
-  button.innerHTML = `${iconMarkup(node.type === 'drawer' ? 'drawer' : 'file')}<span class="${className}__label">${labelFromTitle(node.title)}</span>`;
+  button.innerHTML = `${iconMarkup(getIconType(node))}<span class="${className}__label">${labelFromTitle(node.title)}</span>`;
   return button;
 }
 

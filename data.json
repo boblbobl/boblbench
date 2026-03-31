@@ -7,6 +7,7 @@
   "nodes": {
     "about-drawer": {
       "type": "drawer",
+      "icon": "drawer",
       "title": "About",
       "toolbar": ["Workbench", "Open", "Parent"],
       "children": ["about-file", "now-file"],
@@ -14,6 +15,7 @@
     },
     "journal-drawer": {
       "type": "drawer",
+      "icon": "drawer",
       "title": "Journal",
       "toolbar": ["Workbench", "Entries"],
       "children": ["bootlog-file", "ideas-file"],
@@ -21,6 +23,7 @@
     },
     "projects-drawer": {
       "type": "drawer",
+      "icon": "drawer",
       "title": "Projects",
       "toolbar": ["Workbench", "Experiments"],
       "children": ["desktop-file", "links-file", "writing-file"],
@@ -28,42 +31,49 @@
     },
     "about-file": {
       "type": "file",
+      "icon": "file",
       "title": "About.info",
       "defaultPosition": { "left": 86, "top": 84, "width": "min(28rem, 82vw)" },
       "body": "<div class=\"window__body copy-block\"><p>boblbench is a personal site disguised as a tiny old computer.</p><p>The idea is to browse thoughts and projects as drawers, disks, and files instead of a normal scrolling blog feed.</p></div>"
     },
     "now-file": {
       "type": "file",
+      "icon": "file",
       "title": "Now.readme",
       "defaultPosition": { "left": 150, "top": 130, "width": "min(28rem, 82vw)" },
       "body": "<div class=\"window__body copy-block\"><p>Current mission: build a convincing Amiga Workbench-inspired shell using only HTML, CSS, and JavaScript.</p><p>Short term goal: get the icon language and drawer hierarchy feeling right before adding real content.</p></div>"
     },
     "bootlog-file": {
       "type": "markdown",
+      "icon": "file",
       "title": "Bootlog.md",
       "defaultPosition": { "left": 190, "top": 122, "width": "min(36rem, 88vw)" },
       "src": "./content/journal/bootlog.md"
     },
     "ideas-file": {
       "type": "file",
+      "icon": "file",
       "title": "Ideas.txt",
       "defaultPosition": { "left": 240, "top": 160, "width": "min(28rem, 82vw)" },
       "body": "<div class=\"window__body copy-block\"><p>Possible future additions:</p><p>- a startup chime and faux boot sequence</p><p>- icons that can be selected before opening</p><p>- a disk with archived years of writing</p></div>"
     },
     "desktop-file": {
       "type": "file",
+      "icon": "disk",
       "title": "DesktopProject.doc",
       "defaultPosition": { "left": 260, "top": 92, "width": "min(28rem, 82vw)" },
       "body": "<div class=\"window__body copy-block\"><p>The desktop itself is the project: a nostalgic interface that still works as a readable public website.</p></div>"
     },
     "links-file": {
       "type": "file",
+      "icon": "file",
       "title": "Links.info",
       "defaultPosition": { "left": 290, "top": 136, "width": "min(28rem, 82vw)" },
       "body": "<div class=\"window__body copy-block\"><p>This can later become a curated set of internet shortcuts, references, and favorite corners of the web.</p></div>"
     },
     "writing-file": {
       "type": "markdown",
+      "icon": "file",
       "title": "Writing.md",
       "defaultPosition": { "left": 320, "top": 176, "width": "min(36rem, 88vw)" },
       "src": "./content/writing/writing.md"
