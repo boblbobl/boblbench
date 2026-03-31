@@ -107,77 +107,33 @@ select {
 .wb-icon {
   position: relative;
   display: block;
-  width: 44px;
-  height: 36px;
-  image-rendering: pixelated;
+  width: 48px;
+  height: 48px;
 }
 
-.wb-icon--drawer .wb-icon__lid,
-.wb-icon--drawer .wb-icon__body,
-.wb-icon--drawer .wb-icon__slot,
+.wb-icon--svg {
+  width: 48px;
+  height: 48px;
+}
+
+.wb-icon__svg-image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
 .wb-icon--file .wb-icon__sheet,
-.wb-icon--file .wb-icon__fold,
-.wb-icon--disk .wb-icon__disk,
-.wb-icon--disk .wb-icon__label {
+.wb-icon--file .wb-icon__fold {
   position: absolute;
   display: block;
 }
 
-.wb-icon--sprite {
-  width: 32px;
-  height: 32px;
-  background-image: url('../img/workbench-icons.gif');
-  background-repeat: no-repeat;
-  background-size: auto;
-  image-rendering: pixelated;
-}
-
-.wb-icon--sprite-drawer {
-  background-position: 0 0;
-}
-
-.wb-icon--sprite-disk {
-  background-position: -32px 0;
-}
-
-.wb-icon--trash {
-  background-position: -1120px 0;
-}
-
-.wb-icon--drawer .wb-icon__lid {
-  left: 10px;
-  top: 2px;
-  width: 18px;
-  height: 8px;
-  background: var(--drawer-orange);
-  border: 2px solid var(--panel-deep);
-  box-shadow: inset 2px 2px 0 #f4c36a;
-}
-
-.wb-icon--drawer .wb-icon__body {
-  left: 4px;
-  top: 10px;
-  width: 34px;
-  height: 20px;
-  background: var(--drawer-cream);
-  border: 2px solid var(--panel-deep);
-  box-shadow: inset 2px 2px 0 #ffffff, inset -2px -2px 0 #a7a7a7;
-}
-
-.wb-icon--drawer .wb-icon__slot {
-  left: 14px;
-  top: 17px;
-  width: 14px;
-  height: 2px;
-  background: var(--drawer-orange-dark);
-  border-top: 2px solid var(--panel-deep);
-}
-
 .wb-icon--file .wb-icon__sheet {
-  left: 9px;
-  top: 4px;
-  width: 22px;
-  height: 26px;
+  left: 11px;
+  top: 6px;
+  width: 24px;
+  height: 30px;
   background: #fff;
   border: 2px solid var(--panel-deep);
   box-shadow: inset -2px -2px 0 #b8b8b8;
@@ -185,30 +141,11 @@ select {
 
 .wb-icon--file .wb-icon__fold {
   right: 11px;
-  top: 4px;
+  top: 6px;
   width: 0;
   height: 0;
   border-left: 8px solid transparent;
   border-bottom: 8px solid #cfcfcf;
-}
-
-.wb-icon--disk .wb-icon__disk {
-  left: 8px;
-  top: 4px;
-  width: 26px;
-  height: 26px;
-  background: #fff;
-  border: 2px solid var(--panel-deep);
-  box-shadow: inset -2px -2px 0 #b8b8b8;
-}
-
-.wb-icon--disk .wb-icon__label {
-  left: 13px;
-  top: 8px;
-  width: 12px;
-  height: 5px;
-  background: var(--red);
-  border: 1px solid var(--panel-deep);
 }
 
 .window {

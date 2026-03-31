@@ -6,6 +6,21 @@ const windowTemplate = document.getElementById('window-template');
 const brandLabel = document.getElementById('brand-label');
 const memoryLabel = document.getElementById('memory-label');
 
+const SVG_ICON_ASSETS = {
+  drawer: {
+    closed: '/static/icons/drawer-closed.svg',
+    open: '/static/icons/drawer-open.svg',
+  },
+  disk: {
+    closed: '/static/icons/disk-closed.svg',
+    open: '/static/icons/disk-open.svg',
+  },
+  trash: {
+    closed: '/static/icons/trash-closed.svg',
+    open: '/static/icons/trash-open.svg',
+  },
+};
+
 let topZ = 10;
 
 const openWindows = new Map();
@@ -17,6 +32,24 @@ function focusWindow(windowEl) {
   document.querySelectorAll('.window').forEach((item) => item.classList.remove('is-active'));
   windowEl.classList.add('is-active');
   windowEl.style.zIndex = String(topZ);
+}
+
+function refreshIconStates() {
+  document.querySelectorAll('[data-icon-node-id]').forEach((iconEl) => {
+    const nodeId = iconEl.dataset.iconNodeId;
+    const node = nodes[nodeId];
+    if (!node) return;
+    const isOpen = openWindows.has(nodeId);
+    const iconType = getIconType(node);
+    const svgImage = iconEl.querySelector('.wb-icon__svg-image');
+
+    iconEl.classList.toggle('is-open', isOpen);
+
+    if (svgImage) {
+      svgImage.src = getSvgIconSource(iconType, isOpen);
+      svgImage.alt = '';
+    }
+  });
 }
 
 function saveWindowState(nodeId, windowEl) {
@@ -45,18 +78,17 @@ function getIconType(node) {
   return 'file';
 }
 
-function iconMarkup(iconType) {
-  if (iconType === 'drawer') {
-    return '<span class="wb-icon wb-icon--drawer" aria-hidden="true"><span class="wb-icon__lid"></span><span class="wb-icon__body"></span><span class="wb-icon__slot"></span></span>';
-  }
+function getSvgIconSource(iconType, isOpen) {
+  const iconAsset = SVG_ICON_ASSETS[iconType];
+  if (!iconAsset) return '';
+  return isOpen ? iconAsset.open : iconAsset.closed;
+}
 
-  if (iconType === 'disk') {
-    return '<span class="wb-icon wb-icon--disk" aria-hidden="true"><span class="wb-icon__disk"></span><span class="wb-icon__label"></span></span>';
-  }
+function iconMarkup(nodeId, iconType) {
+  const svgSource = getSvgIconSource(iconType, openWindows.has(nodeId));
 
-  const spriteIcons = new Set(['sprite-drawer', 'sprite-disk', 'trash']);
-  if (spriteIcons.has(iconType)) {
-    return `<span class="wb-icon wb-icon--sprite wb-icon--${iconType}" aria-hidden="true"></span>`;
+  if (svgSource) {
+    return `<span class="wb-icon wb-icon--svg" data-icon-node-id="${nodeId}" aria-hidden="true"><img class="wb-icon__svg-image" src="${svgSource}" alt="" /></span>`;
   }
 
   return '<span class="wb-icon wb-icon--file" aria-hidden="true"><span class="wb-icon__sheet"></span><span class="wb-icon__fold"></span></span>';
@@ -71,7 +103,7 @@ function makeIcon(nodeId, className = 'file-icon') {
   const button = document.createElement('button');
   button.className = className;
   button.dataset.target = nodeId;
-  button.innerHTML = `${iconMarkup(getIconType(node))}<span class="${className}__label">${labelFromTitle(node.title)}</span>`;
+  button.innerHTML = `${iconMarkup(nodeId, getIconType(node))}<span class="${className}__label">${labelFromTitle(node.title)}</span>`;
   return button;
 }
 
@@ -84,6 +116,7 @@ function bindWindow(nodeId, windowEl) {
       saveWindowState(nodeId, windowEl);
       openWindows.delete(nodeId);
       windowEl.remove();
+      refreshIconStates();
     });
   }
 
@@ -143,6 +176,7 @@ function buildDrawerWindow(nodeId) {
   openWindows.set(nodeId, windowEl);
   bindWindow(nodeId, windowEl);
   focusWindow(windowEl);
+  refreshIconStates();
 }
 
 async function loadMarkdownSource(node) {
@@ -189,6 +223,7 @@ async function buildMarkdownWindow(nodeId) {
   bindWindow(nodeId, windowEl);
   attachMarkdownViewerControls(windowEl);
   focusWindow(windowEl);
+  refreshIconStates();
 
   try {
     const markdown = await loadMarkdownSource(node);
@@ -215,12 +250,14 @@ function buildFileWindow(nodeId) {
   openWindows.set(nodeId, windowEl);
   bindWindow(nodeId, windowEl);
   focusWindow(windowEl);
+  refreshIconStates();
 }
 
 async function openNode(nodeId) {
   const existingWindow = openWindows.get(nodeId);
   if (existingWindow) {
     focusWindow(existingWindow);
+    refreshIconStates();
     return;
   }
 
@@ -236,6 +273,7 @@ function renderDesktop(rootIcons) {
   rootIcons.forEach((nodeId) => {
     desktopSurface.appendChild(makeIcon(nodeId, 'desktop-icon'));
   });
+  refreshIconStates();
 }
 
 async function init() {
