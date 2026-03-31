@@ -10,6 +10,7 @@
   --drawer-orange-dark: #9a5b0f;
   --drawer-cream: #f5f1e7;
   --window-blue: #0f4ca9;
+  --window-grey: #cfcfcf;
   --icon-shadow: #4e4e4e;
   font-family: Arial, Helvetica, sans-serif;
 }
@@ -56,11 +57,9 @@ select {
   justify-content: space-between;
   gap: 1rem;
   min-height: 1.38rem;
-  background: repeating-linear-gradient(#ffffff, #ffffff 4px, var(--window-blue) 4px, var(--window-blue) 9px);
-  border-left: 5px solid #fff;
-  border-right: 5px solid #fff;
+  background: #fff;
   color: var(--window-blue);
-  font-size: 0.92rem;
+  font-size: 0.84rem;
   line-height: 1.2;
 }
 
@@ -211,11 +210,15 @@ select {
   gap: 0.4rem;
   min-height: 1.38rem;
   color: #fff;
-  background: repeating-linear-gradient(#ffffff, #ffffff 4px, var(--window-blue) 4px, var(--window-blue) 9px);
+  background: repeating-linear-gradient(#ffffff, #ffffff 4px, var(--window-grey) 4px, var(--window-grey) 9px);*/
   border-left: 5px solid #fff;
   border-right: 5px solid #fff;
   cursor: grab;
   user-select: none;
+}
+
+.window.is-active .window__titlebar {
+  background: repeating-linear-gradient(#ffffff, #ffffff 4px, var(--window-blue) 4px, var(--window-blue) 9px);
 }
 
 .window__titlebar:active {
@@ -227,9 +230,13 @@ select {
   width: fit-content;
   padding: 0 0.5rem 0 0.28rem;
   background: #fff;
-  color: var(--window-blue);
+  color: var(--window-grey);
   font-size: 0.92rem;
   line-height: 1.2;
+}
+
+.window.is-active .window__titletext {
+  color: var(--window-blue);
 }
 
 .window__titletools {
