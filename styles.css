@@ -313,6 +313,8 @@ select {
   font-size: var(--viewer-font-size);
   line-height: var(--viewer-line-height);
   background: #fff;
+  max-height: 70vh;
+  overflow-y: auto;
 }
 
 .markdown-viewer h1,
