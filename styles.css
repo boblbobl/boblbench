@@ -18,12 +18,20 @@
   box-sizing: border-box;
 }
 
+@font-face {
+  font-family: ChicagoFLFRegular; /* set name */
+  src: url(static/fonts/chicago/ChicagoFLF.ttf); /* url of the font */
+}
+
 html,
 body {
   margin: 0;
   min-height: 100%;
   background: var(--desktop-blue);
   color: var(--ink);
+  font-family: 'ChicagoFLFRegular';
+  font-weight: normal;
+  font-style: normal;
 }
 
 body {
@@ -304,6 +312,7 @@ select {
   --viewer-line-height: 1.55;
   font-size: var(--viewer-font-size);
   line-height: var(--viewer-line-height);
+  background: #fff;
 }
 
 .markdown-viewer h1,
