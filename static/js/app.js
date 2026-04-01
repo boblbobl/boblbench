@@ -19,6 +19,9 @@ const SVG_ICON_ASSETS = {
     closed: '/static/icons/trash-closed.svg',
     open: '/static/icons/trash-open.svg',
   },
+  file: {
+    closed: '/static/icons/file.svg',
+  },
 };
 
 const ICON_SIZE_PRESETS = {
@@ -103,7 +106,8 @@ function getIconSize(node) {
 function getSvgIconSource(iconType, isOpen) {
   const iconAsset = SVG_ICON_ASSETS[iconType];
   if (!iconAsset) return '';
-  return isOpen ? iconAsset.open : iconAsset.closed;
+  if (isOpen && iconAsset.open) return iconAsset.open;
+  return iconAsset.closed || '';
 }
 
 function iconMarkup(nodeId, iconType) {
