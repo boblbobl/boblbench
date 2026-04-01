@@ -21,6 +21,12 @@ const SVG_ICON_ASSETS = {
   },
 };
 
+const ICON_SIZE_PRESETS = {
+  regular: { width: 42, height: 42 },
+  wide: { width: 72, height: 42 },
+  large: { width: 72, height: 72 },
+};
+
 let topZ = 10;
 
 const openWindows = new Map();
@@ -78,6 +84,22 @@ function getIconType(node) {
   return 'file';
 }
 
+function getIconSize(node) {
+  if (typeof node.iconSize === 'string' && ICON_SIZE_PRESETS[node.iconSize]) {
+    return { name: node.iconSize, ...ICON_SIZE_PRESETS[node.iconSize] };
+  }
+
+  if (node.iconSize && typeof node.iconSize === 'object' && node.iconSize.width && node.iconSize.height) {
+    return {
+      name: 'custom',
+      width: node.iconSize.width,
+      height: node.iconSize.height,
+    };
+  }
+
+  return { name: 'regular', ...ICON_SIZE_PRESETS.regular };
+}
+
 function getSvgIconSource(iconType, isOpen) {
   const iconAsset = SVG_ICON_ASSETS[iconType];
   if (!iconAsset) return '';
@@ -85,13 +107,15 @@ function getSvgIconSource(iconType, isOpen) {
 }
 
 function iconMarkup(nodeId, iconType) {
+  const node = nodes[nodeId];
   const svgSource = getSvgIconSource(iconType, openWindows.has(nodeId));
+  const iconSize = getIconSize(node);
 
   if (svgSource) {
-    return `<span class="wb-icon wb-icon--svg" data-icon-node-id="${nodeId}" aria-hidden="true"><img class="wb-icon__svg-image" src="${svgSource}" alt="" /></span>`;
+    return `<span class="wb-icon wb-icon--svg wb-icon--size-${iconSize.name}" data-icon-node-id="${nodeId}" style="--icon-width:${iconSize.width}px; --icon-height:${iconSize.height}px;" aria-hidden="true"><img class="wb-icon__svg-image" src="${svgSource}" alt="" /></span>`;
   }
 
-  return '<span class="wb-icon wb-icon--file" aria-hidden="true"><span class="wb-icon__sheet"></span><span class="wb-icon__fold"></span></span>';
+  return `<span class="wb-icon wb-icon--file wb-icon--size-${iconSize.name}" style="--icon-width:${iconSize.width}px; --icon-height:${iconSize.height}px;" aria-hidden="true"><span class="wb-icon__sheet"></span><span class="wb-icon__fold"></span></span>`;
 }
 
 function labelFromTitle(title) {
