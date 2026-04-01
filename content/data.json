@@ -2,13 +2,12 @@
   "desktop": {
     "versionLabel": "boblbench, Version 0.3",
     "memoryLabel": "383896 free memory",
-    "rootIcons": ["about-drawer", "journal-drawer", "projects-drawer"]
+    "rootIcons": ["about-drawer", "journal-drawer", "trashcan"]
   },
   "nodes": {
     "about-drawer": {
       "type": "drawer",
-      "icon": "drawer",
-      "iconSize": "wide",
+      "icon": "disk",
       "title": "About",
       "toolbar": ["Workbench", "Open", "Parent"],
       "children": ["about-file", "now-file"],
@@ -23,12 +22,12 @@
       "children": ["bootlog-file", "ideas-file"],
       "defaultPosition": { "left": 120, "top": 100, "width": "min(29rem, 84vw)" }
     },
-    "projects-drawer": {
+    "trashcan": {
       "type": "drawer",
-      "icon": "drawer",
-      "iconSize": "wide",
-      "title": "Projects",
-      "toolbar": ["Workbench", "Experiments"],
+      "icon": "trash",
+      "iconSize": "large",
+      "title": "Trashcan",
+      "toolbar": ["Empty Trash"],
       "children": ["desktop-file", "links-file", "writing-file"],
       "defaultPosition": { "left": 220, "top": 86, "width": "min(29rem, 84vw)" }
     },
