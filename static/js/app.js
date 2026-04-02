@@ -8,19 +8,19 @@ const memoryLabel = document.getElementById('memory-label');
 
 const SVG_ICON_ASSETS = {
   drawer: {
-    closed: '/static/icons/drawer-closed.svg',
-    open: '/static/icons/drawer-open.svg',
+    closed: './static/icons/drawer-closed.svg',
+    open: './static/icons/drawer-open.svg',
   },
   disk: {
-    closed: '/static/icons/disk-closed.svg',
-    open: '/static/icons/disk-open.svg',
+    closed: './static/icons/disk-closed.svg',
+    open: './static/icons/disk-open.svg',
   },
   trash: {
-    closed: '/static/icons/trash-closed.svg',
-    open: '/static/icons/trash-open.svg',
+    closed: './static/icons/trash-closed.svg',
+    open: './static/icons/trash-open.svg',
   },
   file: {
-    closed: '/static/icons/file.svg',
+    closed: './static/icons/file.svg',
   },
 };
 
