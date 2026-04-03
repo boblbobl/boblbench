@@ -34,10 +34,11 @@ let topZ = 10;
 
 const openWindows = new Map();
 const eyeState = {
-  rafId: null,
   pointerX: window.innerWidth * 0.5,
   pointerY: window.innerHeight * 0.5,
 };
+const googlyEyesBindings = new Map();
+let googlyEyesFrame = null;
 const windowState = new Map();
 let nodes = {};
 
@@ -147,6 +148,7 @@ function bindWindow(nodeId, windowEl) {
   if (closeButton) {
     closeButton.addEventListener('click', () => {
       saveWindowState(nodeId, windowEl);
+      unbindGooglyEyes(nodeId);
       openWindows.delete(nodeId);
       windowEl.remove();
       refreshIconStates();
@@ -281,40 +283,66 @@ function googlyEyesMarkup() {
   `;
 }
 
-function bindGooglyEyes(container) {
+function renderGooglyEyesBinding(binding) {
+  binding.eyes.forEach((eyeEl) => {
+    const pupil = eyeEl.querySelector('[data-pupil]');
+    if (!pupil) return;
+
+    const rect = eyeEl.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    const dx = eyeState.pointerX - centerX;
+    const dy = eyeState.pointerY - centerY;
+    const angle = Math.atan2(dy, dx);
+    const maxRadius = rect.width * 0.22;
+    const distance = Math.min(maxRadius, Math.hypot(dx, dy) * 0.18);
+    const x = Math.cos(angle) * distance;
+    const y = Math.sin(angle) * distance;
+
+    pupil.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+  });
+}
+
+function queueGooglyEyesRender() {
+  if (googlyEyesFrame !== null) return;
+
+  googlyEyesFrame = window.requestAnimationFrame(() => {
+    googlyEyesFrame = null;
+    googlyEyesBindings.forEach((binding) => {
+      if (!binding.container.isConnected) {
+        googlyEyesBindings.delete(binding.nodeId);
+        return;
+      }
+      renderGooglyEyesBinding(binding);
+    });
+  });
+}
+
+function bindGooglyEyes(nodeId, container) {
   const eyes = [...container.querySelectorAll('[data-eye]')];
   if (!eyes.length) return;
 
-  const renderEyes = () => {
-    eyes.forEach((eyeEl) => {
-      const pupil = eyeEl.querySelector('[data-pupil]');
-      if (!pupil) return;
+  googlyEyesBindings.set(nodeId, {
+    nodeId,
+    container,
+    eyes,
+  });
 
-      const rect = eyeEl.getBoundingClientRect();
-      const centerX = rect.left + rect.width / 2;
-      const centerY = rect.top + rect.height / 2;
-      const dx = eyeState.pointerX - centerX;
-      const dy = eyeState.pointerY - centerY;
-      const angle = Math.atan2(dy, dx);
-      const maxRadius = rect.width * 0.22;
-      const distance = Math.min(maxRadius, Math.hypot(dx, dy) * 0.18);
-      const x = Math.cos(angle) * distance;
-      const y = Math.sin(angle) * distance;
+  queueGooglyEyesRender();
+}
 
-      pupil.style.transform = `translate3d(${x}px, ${y}px, 0)`;
-    });
-  };
+function unbindGooglyEyes(nodeId) {
+  googlyEyesBindings.delete(nodeId);
+}
 
-  const queueRender = () => {
-    if (eyeState.rafId !== null) return;
-    eyeState.rafId = window.requestAnimationFrame(() => {
-      eyeState.rafId = null;
-      renderEyes();
-    });
-  };
+function initGooglyEyesTracking() {
+  window.addEventListener('pointermove', (event) => {
+    eyeState.pointerX = event.clientX;
+    eyeState.pointerY = event.clientY;
+    queueGooglyEyesRender();
+  }, { passive: true });
 
-  queueRender();
-  return queueRender;
+  window.addEventListener('resize', queueGooglyEyesRender);
 }
 
 function buildExperienceWindow(nodeId) {
@@ -344,15 +372,7 @@ function buildExperienceWindow(nodeId) {
   refreshIconStates();
 
   if (node.experience === 'googly-eyes') {
-    const queueRender = bindGooglyEyes(windowEl);
-    if (queueRender) {
-      window.addEventListener('pointermove', (event) => {
-        eyeState.pointerX = event.clientX;
-        eyeState.pointerY = event.clientY;
-        queueRender();
-      }, { passive: true });
-      window.addEventListener('resize', queueRender);
-    }
+    bindGooglyEyes(nodeId, windowEl);
   }
 }
 
@@ -405,6 +425,7 @@ async function init() {
   brandLabel.textContent = data.desktop?.versionLabel;
   memoryLabel.textContent = data.desktop?.memoryLabel;
   renderDesktop(data.desktop?.rootIcons || []);
+  initGooglyEyesTracking();
   await openNode('writing-file');
 }
 
