@@ -5,6 +5,7 @@ const desktopSurface = document.getElementById('desktop-surface');
 const windowTemplate = document.getElementById('window-template');
 const brandLabel = document.getElementById('brand-label');
 const memoryLabel = document.getElementById('memory-label');
+const googlyEyes = document.getElementById('googly-eyes');
 
 const SVG_ICON_ASSETS = {
   drawer: {
@@ -33,6 +34,11 @@ const ICON_SIZE_PRESETS = {
 let topZ = 10;
 
 const openWindows = new Map();
+const eyeState = {
+  rafId: null,
+  pointerX: window.innerWidth * 0.5,
+  pointerY: window.innerHeight * 0.5,
+};
 const windowState = new Map();
 let nodes = {};
 
@@ -263,6 +269,48 @@ async function buildMarkdownWindow(nodeId) {
   }
 }
 
+function initGooglyEyes() {
+  if (!googlyEyes) return;
+
+  const eyes = [...googlyEyes.querySelectorAll('[data-eye]')];
+
+  const renderEyes = () => {
+    eyeState.rafId = null;
+
+    eyes.forEach((eyeEl) => {
+      const pupil = eyeEl.querySelector('[data-pupil]');
+      if (!pupil) return;
+
+      const rect = eyeEl.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+      const dx = eyeState.pointerX - centerX;
+      const dy = eyeState.pointerY - centerY;
+      const angle = Math.atan2(dy, dx);
+      const maxRadius = rect.width * 0.22;
+      const distance = Math.min(maxRadius, Math.hypot(dx, dy) * 0.18);
+      const x = Math.cos(angle) * distance;
+      const y = Math.sin(angle) * distance;
+
+      pupil.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+    });
+  };
+
+  const queueRender = () => {
+    if (eyeState.rafId !== null) return;
+    eyeState.rafId = window.requestAnimationFrame(renderEyes);
+  };
+
+  window.addEventListener('pointermove', (event) => {
+    eyeState.pointerX = event.clientX;
+    eyeState.pointerY = event.clientY;
+    queueRender();
+  }, { passive: true });
+
+  window.addEventListener('resize', queueRender);
+  queueRender();
+}
+
 function buildFileWindow(nodeId) {
   const node = nodes[nodeId];
   const fragment = windowTemplate.content.cloneNode(true);
@@ -311,6 +359,7 @@ async function init() {
   brandLabel.textContent = data.desktop?.versionLabel;
   memoryLabel.textContent = data.desktop?.memoryLabel;
   renderDesktop(data.desktop?.rootIcons || []);
+  initGooglyEyes();
   await openNode('writing-file');
 }
 

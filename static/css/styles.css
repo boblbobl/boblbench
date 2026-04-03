@@ -51,6 +51,43 @@ select {
   background: var(--desktop-blue);
 }
 
+.googly-eyes {
+  position: fixed;
+  right: 1.5rem;
+  bottom: 1.5rem;
+  z-index: 2;
+  display: flex;
+  gap: 0.45rem;
+  align-items: center;
+  padding: 0.5rem 0.65rem;
+  pointer-events: none;
+  filter: drop-shadow(2px 2px 0 rgba(0, 0, 0, 0.45));
+}
+
+.googly-eyes__eye {
+  position: relative;
+  width: 52px;
+  height: 52px;
+  border: 2px solid var(--panel-deep);
+  border-radius: 50%;
+  background: #fff;
+  overflow: hidden;
+}
+
+.googly-eyes__pupil {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 18px;
+  height: 18px;
+  margin-left: -9px;
+  margin-top: -9px;
+  border-radius: 50%;
+  background: #000;
+  transform: translate3d(0, 0, 0);
+  will-change: transform;
+}
+
 .top-strip {
   display: flex;
   align-items: center;
@@ -356,6 +393,13 @@ select {
 @media (max-width: 720px) {
   .top-strip {
     font-size: 0.78rem;
+  }
+
+  .googly-eyes {
+    right: 0.85rem;
+    bottom: 0.85rem;
+    transform: scale(0.9);
+    transform-origin: bottom right;
   }
 
   .window {
