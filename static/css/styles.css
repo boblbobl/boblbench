@@ -52,14 +52,12 @@ select {
 }
 
 .googly-eyes {
-  position: fixed;
-  right: 1.5rem;
-  bottom: 1.5rem;
-  z-index: 2;
   display: flex;
+  justify-content: center;
   gap: 0.45rem;
   align-items: center;
-  padding: 0.5rem 0.65rem;
+  min-height: 12rem;
+  padding: 1rem;
   pointer-events: none;
   filter: drop-shadow(2px 2px 0 rgba(0, 0, 0, 0.45));
 }
@@ -396,10 +394,9 @@ select {
   }
 
   .googly-eyes {
-    right: 0.85rem;
-    bottom: 0.85rem;
+    min-height: 10rem;
     transform: scale(0.9);
-    transform-origin: bottom right;
+    transform-origin: center;
   }
 
   .window {

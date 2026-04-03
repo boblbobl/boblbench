@@ -5,7 +5,6 @@ const desktopSurface = document.getElementById('desktop-surface');
 const windowTemplate = document.getElementById('window-template');
 const brandLabel = document.getElementById('brand-label');
 const memoryLabel = document.getElementById('memory-label');
-const googlyEyes = document.getElementById('googly-eyes');
 
 const SVG_ICON_ASSETS = {
   drawer: {
@@ -269,14 +268,24 @@ async function buildMarkdownWindow(nodeId) {
   }
 }
 
-function initGooglyEyes() {
-  if (!googlyEyes) return;
+function googlyEyesMarkup() {
+  return `
+    <div class="googly-eyes" data-googly-eyes aria-hidden="true">
+      <div class="googly-eyes__eye" data-eye>
+        <div class="googly-eyes__pupil" data-pupil></div>
+      </div>
+      <div class="googly-eyes__eye" data-eye>
+        <div class="googly-eyes__pupil" data-pupil></div>
+      </div>
+    </div>
+  `;
+}
 
-  const eyes = [...googlyEyes.querySelectorAll('[data-eye]')];
+function bindGooglyEyes(container) {
+  const eyes = [...container.querySelectorAll('[data-eye]')];
+  if (!eyes.length) return;
 
   const renderEyes = () => {
-    eyeState.rafId = null;
-
     eyes.forEach((eyeEl) => {
       const pupil = eyeEl.querySelector('[data-pupil]');
       if (!pupil) return;
@@ -298,17 +307,53 @@ function initGooglyEyes() {
 
   const queueRender = () => {
     if (eyeState.rafId !== null) return;
-    eyeState.rafId = window.requestAnimationFrame(renderEyes);
+    eyeState.rafId = window.requestAnimationFrame(() => {
+      eyeState.rafId = null;
+      renderEyes();
+    });
   };
 
-  window.addEventListener('pointermove', (event) => {
-    eyeState.pointerX = event.clientX;
-    eyeState.pointerY = event.clientY;
-    queueRender();
-  }, { passive: true });
-
-  window.addEventListener('resize', queueRender);
   queueRender();
+  return queueRender;
+}
+
+function buildExperienceWindow(nodeId) {
+  const node = nodes[nodeId];
+  const fragment = windowTemplate.content.cloneNode(true);
+  const windowEl = fragment.querySelector('.window');
+  const title = fragment.querySelector('.window__titletext');
+  const content = fragment.querySelector('.window__content');
+
+  title.textContent = node.title;
+
+  if (node.experience === 'googly-eyes') {
+    content.innerHTML = `
+      <div class="window__toolbar">
+        <button class="toolbar-button" type="button">Googly Eyes</button>
+        <button class="toolbar-button" type="button">Follow Cursor</button>
+      </div>
+      <div class="window__body">${googlyEyesMarkup()}</div>
+    `;
+  }
+
+  applyWindowPlacement(nodeId, windowEl);
+  desktop.appendChild(windowEl);
+  openWindows.set(nodeId, windowEl);
+  bindWindow(nodeId, windowEl);
+  focusWindow(windowEl);
+  refreshIconStates();
+
+  if (node.experience === 'googly-eyes') {
+    const queueRender = bindGooglyEyes(windowEl);
+    if (queueRender) {
+      window.addEventListener('pointermove', (event) => {
+        eyeState.pointerX = event.clientX;
+        eyeState.pointerY = event.clientY;
+        queueRender();
+      }, { passive: true });
+      window.addEventListener('resize', queueRender);
+    }
+  }
 }
 
 function buildFileWindow(nodeId) {
@@ -342,6 +387,7 @@ async function openNode(nodeId) {
   if (node.type === 'drawer') buildDrawerWindow(nodeId);
   if (node.type === 'file') buildFileWindow(nodeId);
   if (node.type === 'markdown') await buildMarkdownWindow(nodeId);
+  if (node.type === 'experience') buildExperienceWindow(nodeId);
 }
 
 function renderDesktop(rootIcons) {
@@ -359,7 +405,6 @@ async function init() {
   brandLabel.textContent = data.desktop?.versionLabel;
   memoryLabel.textContent = data.desktop?.memoryLabel;
   renderDesktop(data.desktop?.rootIcons || []);
-  initGooglyEyes();
   await openNode('writing-file');
 }
 

@@ -28,7 +28,7 @@
       "iconSize": "large",
       "title": "Trashcan",
       "toolbar": ["Empty Trash"],
-      "children": ["desktop-file", "links-file", "writing-file"],
+      "children": ["desktop-file", "links-file", "writing-file", "googly-eyes-file"],
       "defaultPosition": { "left": 220, "top": 86, "width": "min(29rem, 84vw)" }
     },
     "about-file": {
@@ -86,6 +86,14 @@
       "title": "Writing.md",
       "defaultPosition": { "left": 320, "top": 176, "width": "min(36rem, 88vw)" },
       "src": "./content/writing/writing.md"
+    },
+    "googly-eyes-file": {
+      "type": "experience",
+      "icon": "file",
+      "iconSize": "regular",
+      "title": "GooglyEyes.exe",
+      "experience": "googly-eyes",
+      "defaultPosition": { "left": 360, "top": 118, "width": "min(24rem, 80vw)" }
     }
   }
 }
