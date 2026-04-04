@@ -70,6 +70,12 @@ select {
   border-radius: 50%;
   background: #fff;
   overflow: hidden;
+  transform-origin: center 58%;
+  transition: transform 95ms ease;
+}
+
+.googly-eyes__eye.is-blinking {
+  transform: scaleY(0.08);
 }
 
 .googly-eyes__pupil {
@@ -84,6 +90,11 @@ select {
   background: #000;
   transform: translate3d(0, 0, 0);
   will-change: transform;
+  transition: opacity 95ms ease;
+}
+
+.googly-eyes__eye.is-blinking .googly-eyes__pupil {
+  opacity: 0;
 }
 
 .top-strip {
