@@ -42,6 +42,10 @@ let googlyEyesFrame = null;
 const windowState = new Map();
 let nodes = {};
 
+function randomBlinkDelay() {
+  return 1400 + Math.random() * 2600;
+}
+
 function focusWindow(windowEl) {
   topZ += 1;
   document.querySelectorAll('.window').forEach((item) => item.classList.remove('is-active'));
@@ -318,20 +322,46 @@ function queueGooglyEyesRender() {
   });
 }
 
+function scheduleGooglyBlink(binding) {
+  binding.blinkTimeout = window.setTimeout(() => {
+    if (!binding.container.isConnected) return;
+
+    binding.eyes.forEach((eyeEl, index) => {
+      window.setTimeout(() => {
+        eyeEl.classList.add('is-blinking');
+      }, index * 35);
+    });
+
+    binding.unblinkTimeout = window.setTimeout(() => {
+      binding.eyes.forEach((eyeEl) => eyeEl.classList.remove('is-blinking'));
+      scheduleGooglyBlink(binding);
+    }, 140);
+  }, randomBlinkDelay());
+}
+
 function bindGooglyEyes(nodeId, container) {
   const eyes = [...container.querySelectorAll('[data-eye]')];
   if (!eyes.length) return;
 
-  googlyEyesBindings.set(nodeId, {
+  const binding = {
     nodeId,
     container,
     eyes,
-  });
+    blinkTimeout: null,
+    unblinkTimeout: null,
+  };
 
+  googlyEyesBindings.set(nodeId, binding);
+  scheduleGooglyBlink(binding);
   queueGooglyEyesRender();
 }
 
 function unbindGooglyEyes(nodeId) {
+  const binding = googlyEyesBindings.get(nodeId);
+  if (binding) {
+    if (binding.blinkTimeout) window.clearTimeout(binding.blinkTimeout);
+    if (binding.unblinkTimeout) window.clearTimeout(binding.unblinkTimeout);
+  }
   googlyEyesBindings.delete(nodeId);
 }
 
