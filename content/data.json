@@ -2,24 +2,22 @@
   "desktop": {
     "versionLabel": "boblbench, Version 0.3",
     "memoryLabel": "383896 free memory",
-    "rootIcons": ["about-drawer", "journal-drawer", "trashcan"]
+    "rootIcons": ["demos-disk", "doc-drawer", "trashcan"]
   },
   "nodes": {
-    "about-drawer": {
+    "demos-disk": {
       "type": "drawer",
       "icon": "disk",
-      "title": "About",
-      "toolbar": ["Workbench", "Open", "Parent"],
-      "children": ["about-file", "now-file"],
+      "title": "Demos",
+      "children": ["googly-eyes-file"],
       "defaultPosition": { "left": 40, "top": 52, "width": "min(29rem, 84vw)" }
     },
-    "journal-drawer": {
+    "doc-drawer": {
       "type": "drawer",
       "icon": "drawer",
       "iconSize": "wide",
-      "title": "Journal",
-      "toolbar": ["Workbench", "Entries"],
-      "children": ["bootlog-file", "ideas-file"],
+      "title": "Documents",
+      "children": ["bootlog-file", "writing-file"],
       "defaultPosition": { "left": 120, "top": 100, "width": "min(29rem, 84vw)" }
     },
     "trashcan": {
@@ -28,7 +26,7 @@
       "iconSize": "large",
       "title": "Trashcan",
       "toolbar": ["Empty Trash"],
-      "children": ["desktop-file", "links-file", "writing-file", "googly-eyes-file"],
+      "children": ["desktop-file", "links-file", "now-file", "ideas-file", "about-file"],
       "defaultPosition": { "left": 220, "top": 86, "width": "min(29rem, 84vw)" }
     },
     "about-file": {
@@ -57,17 +55,16 @@
     },
     "ideas-file": {
       "type": "file",
-      "icon": "trash",
-      "iconSize": "large",
+      "icon": "file",
       "title": "Ideas.txt",
       "defaultPosition": { "left": 240, "top": 160, "width": "min(28rem, 82vw)" },
       "body": "<div class=\"window__body copy-block\"><p>Possible future additions:</p><p>- a startup chime and faux boot sequence</p><p>- icons that can be selected before opening</p><p>- a disk with archived years of writing</p></div>"
     },
     "desktop-file": {
       "type": "file",
-      "icon": "disk",
+      "icon": "file",
       "iconSize": "regular",
-      "title": "DesktopProject.doc",
+      "title": "Desktop",
       "defaultPosition": { "left": 260, "top": 92, "width": "min(28rem, 82vw)" },
       "body": "<div class=\"window__body copy-block\"><p>The desktop itself is the project: a nostalgic interface that still works as a readable public website.</p></div>"
     },
@@ -89,9 +86,9 @@
     },
     "googly-eyes-file": {
       "type": "experience",
-      "icon": "file",
-      "iconSize": "regular",
-      "title": "GooglyEyes.exe",
+      "icon": "eyes",
+      "iconSize": "wide",
+      "title": "Eyes",
       "experience": "googly-eyes",
       "defaultPosition": { "left": 360, "top": 118, "width": "min(24rem, 80vw)" }
     }
