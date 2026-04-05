@@ -118,10 +118,13 @@ select {
 .minesweeper__board {
   display: grid;
   grid-template-columns: repeat(8, 1fr);
-  gap: 2px;
-  padding: 2px;
-  border: 2px solid var(--panel-deep);
-  background: var(--panel-shadow);
+  gap: 0;
+  padding: 3px;
+  border-top: 2px solid #fff;
+  border-left: 2px solid #fff;
+  border-right: 2px solid var(--panel-deep);
+  border-bottom: 2px solid var(--panel-deep);
+  background: var(--panel-low);
 }
 
 .minesweeper__cell {
@@ -130,20 +133,37 @@ select {
   aspect-ratio: 1;
   min-width: 0;
   padding: 0;
-  border: 2px solid var(--panel-deep);
-  background: var(--panel-low);
+  margin: 0;
+  border-top: 2px solid #fff;
+  border-left: 2px solid #fff;
+  border-right: 2px solid #6f6f6f;
+  border-bottom: 2px solid #6f6f6f;
+  background: #c8c8c8;
   color: var(--ink);
-  box-shadow: inset -1px -1px 0 #9a9a9a, inset 1px 1px 0 #fff;
+  box-shadow: none;
   cursor: pointer;
 }
 
+.minesweeper__cell:hover:not(.is-revealed):not(:disabled) {
+  background: #d4d4d4;
+}
+
 .minesweeper__cell.is-revealed {
-  background: #d9d9d9;
-  box-shadow: none;
+  border: 1px solid #8a8a8a;
+  background: #bfbfbf;
+  box-shadow: inset 1px 1px 0 rgba(255, 255, 255, 0.18);
 }
 
 .minesweeper__cell.is-mine {
-  background: #f2b3b3;
+  background: #d8b0b0;
+}
+
+.minesweeper__cell:disabled {
+  cursor: default;
+}
+
+.minesweeper__cell.is-flagged {
+  background: #c8c8c8;
 }
 
 .minesweeper__symbol {
