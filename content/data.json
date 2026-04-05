@@ -94,7 +94,7 @@
     },
     "mines-file": {
       "type": "experience",
-      "icon": "file",
+      "icon": "mine",
       "iconSize": "regular",
       "title": "MinesLite",
       "experience": "minesweeper-lite",

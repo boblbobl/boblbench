@@ -25,6 +25,9 @@ const SVG_ICON_ASSETS = {
   eyes: {
     closed: './static/icons/eyes.svg',
   },
+  mine: {
+    closed: './static/icons/mine.svg',
+  },
 };
 
 const ICON_SIZE_PRESETS = {
@@ -364,13 +367,14 @@ function renderMinesweeper(container, game) {
       button.classList.add('is-revealed');
       if (cell.isMine) {
         button.classList.add('is-mine');
-        button.textContent = '✹';
+        button.innerHTML = minesweeperMineIcon();
       } else if (cell.adjacent > 0) {
         button.classList.add(`minesweeper__cell--${cell.adjacent}`);
         button.textContent = String(cell.adjacent);
       }
     } else if (cell.isFlagged) {
       button.classList.add('is-flagged');
+      button.innerHTML = minesweeperFlagIcon();
     }
 
     if (game.state !== 'playing') {
@@ -420,6 +424,14 @@ function minesweeperMarkup() {
       <div class="minesweeper__board" data-mines-board></div>
     </div>
   `;
+}
+
+function minesweeperMineIcon() {
+  return '<img class="minesweeper__symbol minesweeper__symbol--mine" src="./static/icons/mine.svg" alt="Mine" />';
+}
+
+function minesweeperFlagIcon() {
+  return '<img class="minesweeper__symbol minesweeper__symbol--flag" src="./static/icons/red-flag.svg" alt="Flag" />';
 }
 
 function bindMinesweeper(nodeId, windowEl) {

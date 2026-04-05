@@ -146,9 +146,16 @@ select {
   background: #f2b3b3;
 }
 
-.minesweeper__cell.is-flagged::before {
-  content: '⚑';
-  font-size: 0.9rem;
+.minesweeper__symbol {
+  display: block;
+  width: 70%;
+  height: 70%;
+  object-fit: contain;
+}
+
+.minesweeper__symbol--flag {
+  width: 76%;
+  height: 76%;
 }
 
 .minesweeper__cell--1 { color: #0f4ca9; }
