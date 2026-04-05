@@ -291,6 +291,172 @@ function googlyEyesMarkup() {
   `;
 }
 
+function createMinesweeperGame(rows = 8, cols = 8, mines = 10) {
+  const totalCells = rows * cols;
+  const mineSet = new Set();
+  while (mineSet.size < mines) {
+    mineSet.add(Math.floor(Math.random() * totalCells));
+  }
+
+  const board = Array.from({ length: totalCells }, (_, index) => ({
+    index,
+    isMine: mineSet.has(index),
+    isRevealed: false,
+    isFlagged: false,
+    adjacent: 0,
+  }));
+
+  const neighborsFor = (index) => {
+    const x = index % cols;
+    const y = Math.floor(index / cols);
+    const neighbors = [];
+
+    for (let dy = -1; dy <= 1; dy += 1) {
+      for (let dx = -1; dx <= 1; dx += 1) {
+        if (dx === 0 && dy === 0) continue;
+        const nx = x + dx;
+        const ny = y + dy;
+        if (nx < 0 || nx >= cols || ny < 0 || ny >= rows) continue;
+        neighbors.push(ny * cols + nx);
+      }
+    }
+
+    return neighbors;
+  };
+
+  board.forEach((cell) => {
+    if (cell.isMine) return;
+    cell.adjacent = neighborsFor(cell.index).filter((neighborIndex) => board[neighborIndex].isMine).length;
+  });
+
+  return {
+    rows,
+    cols,
+    mines,
+    board,
+    state: 'playing',
+    revealedCount: 0,
+    flagsUsed: 0,
+    neighborsFor,
+  };
+}
+
+function renderMinesweeper(container, game) {
+  const status = container.querySelector('[data-mines-status]');
+  const boardEl = container.querySelector('[data-mines-board]');
+  const minesLeft = Math.max(0, game.mines - game.flagsUsed);
+
+  status.textContent = game.state === 'won'
+    ? `Cleared! ${minesLeft} mines left.`
+    : game.state === 'lost'
+      ? 'Boom! Click reset to try again.'
+      : `${minesLeft} mines left`;
+
+  boardEl.innerHTML = '';
+
+  game.board.forEach((cell) => {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'minesweeper__cell';
+    button.dataset.index = String(cell.index);
+
+    if (cell.isRevealed) {
+      button.classList.add('is-revealed');
+      if (cell.isMine) {
+        button.classList.add('is-mine');
+        button.textContent = '✹';
+      } else if (cell.adjacent > 0) {
+        button.classList.add(`minesweeper__cell--${cell.adjacent}`);
+        button.textContent = String(cell.adjacent);
+      }
+    } else if (cell.isFlagged) {
+      button.classList.add('is-flagged');
+    }
+
+    if (game.state !== 'playing') {
+      button.disabled = true;
+    }
+
+    boardEl.appendChild(button);
+  });
+}
+
+function revealMinesweeperCell(game, index) {
+  const cell = game.board[index];
+  if (!cell || cell.isRevealed || cell.isFlagged || game.state !== 'playing') return;
+
+  cell.isRevealed = true;
+  game.revealedCount += 1;
+
+  if (cell.isMine) {
+    game.state = 'lost';
+    game.board.forEach((item) => {
+      if (item.isMine) item.isRevealed = true;
+    });
+    return;
+  }
+
+  if (cell.adjacent === 0) {
+    game.neighborsFor(index).forEach((neighborIndex) => revealMinesweeperCell(game, neighborIndex));
+  }
+
+  const safeCells = game.rows * game.cols - game.mines;
+  if (game.revealedCount >= safeCells) {
+    game.state = 'won';
+  }
+}
+
+function toggleMinesweeperFlag(game, index) {
+  const cell = game.board[index];
+  if (!cell || cell.isRevealed || game.state !== 'playing') return;
+  cell.isFlagged = !cell.isFlagged;
+  game.flagsUsed += cell.isFlagged ? 1 : -1;
+}
+
+function minesweeperMarkup() {
+  return `
+    <div class="minesweeper" data-minesweeper>
+      <div class="minesweeper__status" data-mines-status>10 mines left</div>
+      <div class="minesweeper__board" data-mines-board></div>
+    </div>
+  `;
+}
+
+function bindMinesweeper(nodeId, windowEl) {
+  const container = windowEl.querySelector('[data-minesweeper]');
+  if (!container) return;
+
+  let game = createMinesweeperGame();
+  const boardEl = container.querySelector('[data-mines-board]');
+  const resetButton = windowEl.querySelector('[data-mines-reset]');
+
+  const rerender = () => renderMinesweeper(container, game);
+
+  boardEl.addEventListener('click', (event) => {
+    const cellButton = event.target.closest('.minesweeper__cell[data-index]');
+    if (!cellButton) return;
+    revealMinesweeperCell(game, Number(cellButton.dataset.index));
+    rerender();
+  });
+
+  boardEl.addEventListener('contextmenu', (event) => {
+    const cellButton = event.target.closest('.minesweeper__cell[data-index]');
+    if (!cellButton) return;
+    event.preventDefault();
+    toggleMinesweeperFlag(game, Number(cellButton.dataset.index));
+    rerender();
+  });
+
+  if (resetButton) {
+    resetButton.addEventListener('click', () => {
+      game = createMinesweeperGame();
+      rerender();
+    });
+  }
+
+  rerender();
+}
+
 function renderGooglyEyesBinding(binding) {
   binding.eyes.forEach((eyeEl) => {
     const pupil = eyeEl.querySelector('[data-pupil]');
@@ -394,6 +560,16 @@ function buildExperienceWindow(nodeId) {
     `;
   }
 
+  if (node.experience === 'minesweeper-lite') {
+    content.innerHTML = `
+      <div class="window__toolbar">
+        <button class="toolbar-button" type="button" data-mines-reset>Reset</button>
+        <button class="toolbar-button" type="button">Right-click to flag</button>
+      </div>
+      <div class="window__body">${minesweeperMarkup()}</div>
+    `;
+  }
+
   applyWindowPlacement(nodeId, windowEl);
   desktop.appendChild(windowEl);
   openWindows.set(nodeId, windowEl);
@@ -403,6 +579,10 @@ function buildExperienceWindow(nodeId) {
 
   if (node.experience === 'googly-eyes') {
     bindGooglyEyes(nodeId, windowEl);
+  }
+
+  if (node.experience === 'minesweeper-lite') {
+    bindMinesweeper(nodeId, windowEl);
   }
 }
 

@@ -9,7 +9,7 @@
       "type": "drawer",
       "icon": "disk",
       "title": "Demos",
-      "children": ["googly-eyes-file"],
+      "children": ["googly-eyes-file", "mines-file"],
       "defaultPosition": { "left": 40, "top": 52, "width": "min(29rem, 84vw)" }
     },
     "doc-drawer": {
@@ -91,6 +91,14 @@
       "title": "Eyes",
       "experience": "googly-eyes",
       "defaultPosition": { "left": 360, "top": 118, "width": "min(24rem, 80vw)" }
+    },
+    "mines-file": {
+      "type": "experience",
+      "icon": "file",
+      "iconSize": "regular",
+      "title": "MinesLite",
+      "experience": "minesweeper-lite",
+      "defaultPosition": { "left": 220, "top": 84, "width": "min(28rem, 84vw)" }
     }
   }
 }
