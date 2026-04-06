@@ -110,9 +110,6 @@ select {
   align-items: center;
   gap: 0.45rem;
   padding: 0.25rem 0.2rem;
-  border-top: 2px solid #fff;
-  border-left: 2px solid #fff;
-  border-right: 2px solid var(--panel-deep);
   border-bottom: 2px solid var(--panel-deep);
   background: var(--panel-low);
 }
