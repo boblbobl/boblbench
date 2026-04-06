@@ -331,6 +331,9 @@ function createMinesweeperGame(rows = 8, cols = 8, mines = 10) {
     state: 'playing',
     revealedCount: 0,
     flagsUsed: 0,
+    elapsedSeconds: 0,
+    timerId: null,
+    isPressing: false,
     hasPlacedMines: false,
     neighborsFor,
   };
@@ -524,7 +527,7 @@ function bindMinesweeper(nodeId, windowEl) {
     const cellButton = event.target.closest('.minesweeper__cell[data-index]');
     if (!cellButton || game.state !== 'playing') return;
     game.isPressing = true;
-    rerender();
+    renderMinesweeper(container, game);
 
     if (event.pointerType !== 'touch') return;
 
@@ -542,7 +545,6 @@ function bindMinesweeper(nodeId, windowEl) {
     clearLongPress();
     if (game.state === 'playing') {
       game.isPressing = false;
-      rerender();
     }
   });
 
@@ -558,6 +560,7 @@ function bindMinesweeper(nodeId, windowEl) {
     const cellButton = event.target.closest('.minesweeper__cell[data-index]');
     if (!cellButton || longPressTriggered) {
       longPressTriggered = false;
+      rerender();
       return;
     }
 
