@@ -98,7 +98,7 @@
       "iconSize": "regular",
       "title": "MinesLite",
       "experience": "minesweeper-lite",
-      "defaultPosition": { "left": 220, "top": 84, "width": "min(28rem, 84vw)" }
+      "defaultPosition": { "left": 220, "top": 84, "width": "min(20rem, 84vw)" }
     }
   }
 }
