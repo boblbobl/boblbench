@@ -99,9 +99,9 @@ select {
 
 .minesweeper {
   display: grid;
-  gap: 0.6rem;
+  gap: 0.45rem;
   min-height: 14rem;
-  padding: 0.15rem;
+  padding: 0.1rem;
 }
 
 .minesweeper__scorebar {
@@ -151,18 +151,6 @@ select {
   border-left-color: #6f6f6f;
   border-right-color: #fff;
   border-bottom-color: #fff;
-}
-
-.minesweeper__status {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.6rem;
-  padding: 0.25rem 0.4rem;
-  border: 2px solid var(--panel-deep);
-  background: #fff;
-  color: var(--ink);
-  text-align: center;
 }
 
 .minesweeper__board {
@@ -438,6 +426,10 @@ select {
 .window__body {
   min-height: 8rem;
   padding: 0.6rem;
+}
+
+.window__body--panel {
+  background: var(--panel-low);
 }
 
 .icon-grid {

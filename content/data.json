@@ -96,7 +96,7 @@
       "type": "experience",
       "icon": "mine",
       "iconSize": "regular",
-      "title": "MinesLite",
+      "title": "Mines",
       "experience": "minesweeper-lite",
       "defaultPosition": { "left": 220, "top": 84, "width": "min(20rem, 84vw)" }
     }

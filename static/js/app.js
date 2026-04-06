@@ -371,18 +371,11 @@ function getMinesweeperFace(game) {
 }
 
 function renderMinesweeper(container, game) {
-  const status = container.querySelector('[data-mines-status]');
   const boardEl = container.querySelector('[data-mines-board]');
   const faceButton = container.querySelector('[data-mines-face]');
   const mineCounter = container.querySelector('[data-mines-counter]');
   const timerEl = container.querySelector('[data-mines-timer]');
   const minesLeft = Math.max(0, game.mines - game.flagsUsed);
-
-  status.textContent = game.state === 'won'
-    ? 'Cleared the field.'
-    : game.state === 'lost'
-      ? 'Boom! Click reset to try again.'
-      : 'Clear the hidden mines.';
 
   if (faceButton) faceButton.textContent = getMinesweeperFace(game);
   if (mineCounter) mineCounter.textContent = String(minesLeft).padStart(3, '0');
@@ -477,7 +470,6 @@ function minesweeperMarkup() {
         <button class="minesweeper__face" type="button" data-mines-face aria-label="Reset game">🙂</button>
         <div class="minesweeper__counter" data-mines-timer>000</div>
       </div>
-      <div class="minesweeper__status" data-mines-status>Clear the hidden mines.</div>
       <div class="minesweeper__board" data-mines-board></div>
     </div>
   `;
@@ -679,9 +671,8 @@ function buildExperienceWindow(nodeId) {
     content.innerHTML = `
       <div class="window__toolbar">
         <button class="toolbar-button" type="button" data-mines-reset>Reset</button>
-        <button class="toolbar-button" type="button">Right-click to flag</button>
       </div>
-      <div class="window__body">${minesweeperMarkup()}</div>
+      <div class="window__body window__body--panel">${minesweeperMarkup()}</div>
     `;
   }
 
