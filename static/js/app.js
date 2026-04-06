@@ -499,8 +499,6 @@ function bindMinesweeper(nodeId, windowEl) {
   const boardEl = container.querySelector('[data-mines-board]');
   const resetButton = windowEl.querySelector('[data-mines-reset]');
   const faceButton = container.querySelector('[data-mines-face]');
-  let longPressTimer = null;
-  let longPressTriggered = false;
 
   const rerender = () => {
     if (game.state !== 'playing') {
@@ -516,13 +514,6 @@ function bindMinesweeper(nodeId, windowEl) {
     rerender();
   };
 
-  const clearLongPress = () => {
-    if (longPressTimer !== null) {
-      window.clearTimeout(longPressTimer);
-      longPressTimer = null;
-    }
-  };
-
   boardEl.addEventListener('pointerdown', (event) => {
     const cellButton = event.target.closest('.minesweeper__cell[data-index]');
     if (!cellButton || game.state !== 'playing') return;
@@ -530,21 +521,9 @@ function bindMinesweeper(nodeId, windowEl) {
 
     const currentFace = container.querySelector('[data-mines-face]');
     if (currentFace) currentFace.textContent = getMinesweeperFace(game);
-
-    if (event.pointerType !== 'touch') return;
-
-    longPressTriggered = false;
-    clearLongPress();
-    longPressTimer = window.setTimeout(() => {
-      longPressTriggered = true;
-      game.isPressing = false;
-      toggleMinesweeperFlag(game, Number(cellButton.dataset.index));
-      rerender();
-    }, 420);
   });
 
   boardEl.addEventListener('pointerup', () => {
-    clearLongPress();
     if (game.state === 'playing') {
       game.isPressing = false;
       const currentFace = container.querySelector('[data-mines-face]');
@@ -553,7 +532,6 @@ function bindMinesweeper(nodeId, windowEl) {
   });
 
   boardEl.addEventListener('pointerleave', () => {
-    clearLongPress();
     if (game.state === 'playing') {
       game.isPressing = false;
       rerender();
@@ -562,8 +540,7 @@ function bindMinesweeper(nodeId, windowEl) {
 
   boardEl.addEventListener('click', (event) => {
     const cellButton = event.target.closest('.minesweeper__cell[data-index]');
-    if (!cellButton || longPressTriggered) {
-      longPressTriggered = false;
+    if (!cellButton) {
       rerender();
       return;
     }
@@ -702,7 +679,7 @@ function buildExperienceWindow(nodeId) {
     content.innerHTML = `
       <div class="window__toolbar">
         <button class="toolbar-button" type="button" data-mines-reset>Reset</button>
-        <button class="toolbar-button" type="button">Right-click or long-press to flag</button>
+        <button class="toolbar-button" type="button">Right-click to flag</button>
       </div>
       <div class="window__body">${minesweeperMarkup()}</div>
     `;
