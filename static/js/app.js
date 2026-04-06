@@ -489,7 +489,6 @@ function bindMinesweeper(nodeId, windowEl) {
 
   let game = createMinesweeperGame();
   const boardEl = container.querySelector('[data-mines-board]');
-  const resetButton = windowEl.querySelector('[data-mines-reset]');
   const faceButton = container.querySelector('[data-mines-face]');
 
   const rerender = () => {
@@ -552,10 +551,6 @@ function bindMinesweeper(nodeId, windowEl) {
     toggleMinesweeperFlag(game, Number(cellButton.dataset.index));
     rerender();
   });
-
-  if (resetButton) {
-    resetButton.addEventListener('click', resetGame);
-  }
 
   if (faceButton) {
     faceButton.addEventListener('click', resetGame);
@@ -669,10 +664,7 @@ function buildExperienceWindow(nodeId) {
 
   if (node.experience === 'minesweeper-lite') {
     content.innerHTML = `
-      <div class="window__toolbar">
-        <button class="toolbar-button" type="button" data-mines-reset>Reset</button>
-      </div>
-      <div class="window__body window__body--panel">${minesweeperMarkup()}</div>
+      <div class="window__body window__body--mines">${minesweeperMarkup()}</div>
     `;
   }
 
