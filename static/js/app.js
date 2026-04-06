@@ -527,7 +527,9 @@ function bindMinesweeper(nodeId, windowEl) {
     const cellButton = event.target.closest('.minesweeper__cell[data-index]');
     if (!cellButton || game.state !== 'playing') return;
     game.isPressing = true;
-    renderMinesweeper(container, game);
+
+    const currentFace = container.querySelector('[data-mines-face]');
+    if (currentFace) currentFace.textContent = getMinesweeperFace(game);
 
     if (event.pointerType !== 'touch') return;
 
@@ -545,6 +547,8 @@ function bindMinesweeper(nodeId, windowEl) {
     clearLongPress();
     if (game.state === 'playing') {
       game.isPressing = false;
+      const currentFace = container.querySelector('[data-mines-face]');
+      if (currentFace) currentFace.textContent = getMinesweeperFace(game);
     }
   });
 
