@@ -360,16 +360,30 @@ function placeMinesweeperMines(game, safeIndex) {
   game.hasPlacedMines = true;
 }
 
+function getMinesweeperFace(game) {
+  if (game.state === 'won') return '😎';
+  if (game.state === 'lost') return '☠';
+  if (game.isPressing) return '😮';
+  return '🙂';
+}
+
 function renderMinesweeper(container, game) {
   const status = container.querySelector('[data-mines-status]');
   const boardEl = container.querySelector('[data-mines-board]');
+  const faceButton = container.querySelector('[data-mines-face]');
+  const mineCounter = container.querySelector('[data-mines-counter]');
+  const timerEl = container.querySelector('[data-mines-timer]');
   const minesLeft = Math.max(0, game.mines - game.flagsUsed);
 
   status.textContent = game.state === 'won'
-    ? `Cleared! ${minesLeft} mines left.`
+    ? 'Cleared the field.'
     : game.state === 'lost'
       ? 'Boom! Click reset to try again.'
-      : `${minesLeft} mines left`;
+      : 'Clear the hidden mines.';
+
+  if (faceButton) faceButton.textContent = getMinesweeperFace(game);
+  if (mineCounter) mineCounter.textContent = String(minesLeft).padStart(3, '0');
+  if (timerEl) timerEl.textContent = String(game.elapsedSeconds).padStart(3, '0');
 
   boardEl.innerHTML = '';
 
@@ -437,10 +451,30 @@ function toggleMinesweeperFlag(game, index) {
   game.flagsUsed += cell.isFlagged ? 1 : -1;
 }
 
+function startMinesweeperTimer(game, rerender) {
+  if (game.timerId !== null) return;
+  game.timerId = window.setInterval(() => {
+    game.elapsedSeconds += 1;
+    rerender();
+  }, 1000);
+}
+
+function stopMinesweeperTimer(game) {
+  if (game.timerId !== null) {
+    window.clearInterval(game.timerId);
+    game.timerId = null;
+  }
+}
+
 function minesweeperMarkup() {
   return `
     <div class="minesweeper" data-minesweeper>
-      <div class="minesweeper__status" data-mines-status>10 mines left</div>
+      <div class="minesweeper__scorebar">
+        <div class="minesweeper__counter" data-mines-counter>010</div>
+        <button class="minesweeper__face" type="button" data-mines-face aria-label="Reset game">🙂</button>
+        <div class="minesweeper__counter" data-mines-timer>000</div>
+      </div>
+      <div class="minesweeper__status" data-mines-status>Clear the hidden mines.</div>
       <div class="minesweeper__board" data-mines-board></div>
     </div>
   `;
@@ -461,12 +495,76 @@ function bindMinesweeper(nodeId, windowEl) {
   let game = createMinesweeperGame();
   const boardEl = container.querySelector('[data-mines-board]');
   const resetButton = windowEl.querySelector('[data-mines-reset]');
+  const faceButton = container.querySelector('[data-mines-face]');
+  let longPressTimer = null;
+  let longPressTriggered = false;
 
-  const rerender = () => renderMinesweeper(container, game);
+  const rerender = () => {
+    if (game.state !== 'playing') {
+      stopMinesweeperTimer(game);
+      game.isPressing = false;
+    }
+    renderMinesweeper(container, game);
+  };
+
+  const resetGame = () => {
+    stopMinesweeperTimer(game);
+    game = createMinesweeperGame();
+    rerender();
+  };
+
+  const clearLongPress = () => {
+    if (longPressTimer !== null) {
+      window.clearTimeout(longPressTimer);
+      longPressTimer = null;
+    }
+  };
+
+  boardEl.addEventListener('pointerdown', (event) => {
+    const cellButton = event.target.closest('.minesweeper__cell[data-index]');
+    if (!cellButton || game.state !== 'playing') return;
+    game.isPressing = true;
+    rerender();
+
+    if (event.pointerType !== 'touch') return;
+
+    longPressTriggered = false;
+    clearLongPress();
+    longPressTimer = window.setTimeout(() => {
+      longPressTriggered = true;
+      game.isPressing = false;
+      toggleMinesweeperFlag(game, Number(cellButton.dataset.index));
+      rerender();
+    }, 420);
+  });
+
+  boardEl.addEventListener('pointerup', () => {
+    clearLongPress();
+    if (game.state === 'playing') {
+      game.isPressing = false;
+      rerender();
+    }
+  });
+
+  boardEl.addEventListener('pointerleave', () => {
+    clearLongPress();
+    if (game.state === 'playing') {
+      game.isPressing = false;
+      rerender();
+    }
+  });
 
   boardEl.addEventListener('click', (event) => {
     const cellButton = event.target.closest('.minesweeper__cell[data-index]');
-    if (!cellButton) return;
+    if (!cellButton || longPressTriggered) {
+      longPressTriggered = false;
+      return;
+    }
+
+    if (!game.hasPlacedMines) {
+      startMinesweeperTimer(game, rerender);
+    }
+
     revealMinesweeperCell(game, Number(cellButton.dataset.index));
     rerender();
   });
@@ -480,10 +578,11 @@ function bindMinesweeper(nodeId, windowEl) {
   });
 
   if (resetButton) {
-    resetButton.addEventListener('click', () => {
-      game = createMinesweeperGame();
-      rerender();
-    });
+    resetButton.addEventListener('click', resetGame);
+  }
+
+  if (faceButton) {
+    faceButton.addEventListener('click', resetGame);
   }
 
   rerender();
@@ -596,7 +695,7 @@ function buildExperienceWindow(nodeId) {
     content.innerHTML = `
       <div class="window__toolbar">
         <button class="toolbar-button" type="button" data-mines-reset>Reset</button>
-        <button class="toolbar-button" type="button">Right-click to flag</button>
+        <button class="toolbar-button" type="button">Right-click or long-press to flag</button>
       </div>
       <div class="window__body">${minesweeperMarkup()}</div>
     `;

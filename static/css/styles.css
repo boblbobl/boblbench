@@ -104,15 +104,65 @@ select {
   padding: 0.15rem;
 }
 
+.minesweeper__scorebar {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.25rem 0.2rem;
+  border-top: 2px solid #fff;
+  border-left: 2px solid #fff;
+  border-right: 2px solid var(--panel-deep);
+  border-bottom: 2px solid var(--panel-deep);
+  background: var(--panel-low);
+}
+
+.minesweeper__counter {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2rem;
+  padding: 0 0.4rem;
+  border: 2px solid var(--panel-deep);
+  background: #101010;
+  color: #ff3b30;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 1rem;
+  font-weight: bold;
+  letter-spacing: 0.08em;
+}
+
+.minesweeper__face {
+  width: 2.2rem;
+  height: 2.2rem;
+  padding: 0;
+  border-top: 2px solid #fff;
+  border-left: 2px solid #fff;
+  border-right: 2px solid #6f6f6f;
+  border-bottom: 2px solid #6f6f6f;
+  background: #c8c8c8;
+  font-size: 1.1rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.minesweeper__face:active {
+  border-top-color: #6f6f6f;
+  border-left-color: #6f6f6f;
+  border-right-color: #fff;
+  border-bottom-color: #fff;
+}
+
 .minesweeper__status {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   gap: 0.6rem;
   padding: 0.25rem 0.4rem;
   border: 2px solid var(--panel-deep);
   background: #fff;
   color: var(--ink);
+  text-align: center;
 }
 
 .minesweeper__board {
