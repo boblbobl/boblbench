@@ -296,14 +296,10 @@ function googlyEyesMarkup() {
 
 function createMinesweeperGame(rows = 8, cols = 8, mines = 10) {
   const totalCells = rows * cols;
-  const mineSet = new Set();
-  while (mineSet.size < mines) {
-    mineSet.add(Math.floor(Math.random() * totalCells));
-  }
 
   const board = Array.from({ length: totalCells }, (_, index) => ({
     index,
-    isMine: mineSet.has(index),
+    isMine: false,
     isRevealed: false,
     isFlagged: false,
     adjacent: 0,
@@ -327,11 +323,6 @@ function createMinesweeperGame(rows = 8, cols = 8, mines = 10) {
     return neighbors;
   };
 
-  board.forEach((cell) => {
-    if (cell.isMine) return;
-    cell.adjacent = neighborsFor(cell.index).filter((neighborIndex) => board[neighborIndex].isMine).length;
-  });
-
   return {
     rows,
     cols,
@@ -340,8 +331,33 @@ function createMinesweeperGame(rows = 8, cols = 8, mines = 10) {
     state: 'playing',
     revealedCount: 0,
     flagsUsed: 0,
+    hasPlacedMines: false,
     neighborsFor,
   };
+}
+
+function placeMinesweeperMines(game, safeIndex) {
+  const blocked = new Set([safeIndex]);
+  const available = game.board.filter((cell) => !blocked.has(cell.index)).map((cell) => cell.index);
+
+  for (let i = available.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [available[i], available[j]] = [available[j], available[i]];
+  }
+
+  available.slice(0, game.mines).forEach((index) => {
+    game.board[index].isMine = true;
+  });
+
+  game.board.forEach((cell) => {
+    if (cell.isMine) {
+      cell.adjacent = 0;
+      return;
+    }
+    cell.adjacent = game.neighborsFor(cell.index).filter((neighborIndex) => game.board[neighborIndex].isMine).length;
+  });
+
+  game.hasPlacedMines = true;
 }
 
 function renderMinesweeper(container, game) {
@@ -388,6 +404,10 @@ function renderMinesweeper(container, game) {
 function revealMinesweeperCell(game, index) {
   const cell = game.board[index];
   if (!cell || cell.isRevealed || cell.isFlagged || game.state !== 'playing') return;
+
+  if (!game.hasPlacedMines) {
+    placeMinesweeperMines(game, index);
+  }
 
   cell.isRevealed = true;
   game.revealedCount += 1;
