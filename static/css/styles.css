@@ -158,10 +158,6 @@ select {
   grid-template-columns: repeat(8, 1fr);
   gap: 0;
   padding: 3px;
-  border-top: 2px solid #fff;
-  border-left: 2px solid #fff;
-  border-right: 2px solid var(--panel-deep);
-  border-bottom: 2px solid var(--panel-deep);
   background: var(--panel-low);
 }
 
@@ -429,7 +425,7 @@ select {
 }
 
 .window__body--mines {
-  padding: 0.2rem;
+  padding: 0;
 }
 
 .icon-grid {
