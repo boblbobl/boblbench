@@ -365,7 +365,7 @@ function placeMinesweeperMines(game, safeIndex) {
 
 function getMinesweeperFace(game) {
   if (game.state === 'won') return '😎';
-  if (game.state === 'lost') return '☠';
+  if (game.state === 'lost') return '😵';
   if (game.isPressing) return '😮';
   return '🙂';
 }
