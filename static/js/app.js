@@ -45,6 +45,7 @@ const eyeState = {
 };
 const googlyEyesBindings = new Map();
 let googlyEyesFrame = null;
+const webcamAsciiBindings = new Map();
 const windowState = new Map();
 let nodes = {};
 
@@ -159,6 +160,7 @@ function bindWindow(nodeId, windowEl) {
     closeButton.addEventListener('click', () => {
       saveWindowState(nodeId, windowEl);
       unbindGooglyEyes(nodeId);
+      unbindWebcamAscii(nodeId);
       openWindows.delete(nodeId);
       windowEl.remove();
       refreshIconStates();
@@ -483,6 +485,126 @@ function minesweeperFlagIcon() {
   return '<img class="minesweeper__symbol minesweeper__symbol--flag" src="./static/icons/red-flag.svg" alt="Flag" />';
 }
 
+function webcamAsciiMarkup() {
+  return `
+    <div class="webcam-ascii" data-webcam-ascii>
+      <div class="webcam-ascii__controls">
+        <button class="toolbar-button" type="button" data-webcam-start>Start camera</button>
+        <button class="toolbar-button" type="button" data-webcam-stop>Stop</button>
+      </div>
+      <p class="webcam-ascii__status" data-webcam-status>Ready. Click start and allow camera access.</p>
+      <pre class="webcam-ascii__output" data-webcam-output></pre>
+      <video class="webcam-ascii__video" data-webcam-video playsinline muted></video>
+      <canvas class="webcam-ascii__canvas" data-webcam-canvas width="96" height="64"></canvas>
+    </div>
+  `;
+}
+
+function renderAsciiFrame(context, width, height) {
+  const charset = ' .,:;i1tfLCG08@';
+  const { data } = context.getImageData(0, 0, width, height);
+  let output = '';
+
+  for (let y = 0; y < height; y += 2) {
+    for (let x = 0; x < width; x += 1) {
+      const index = (y * width + x) * 4;
+      const r = data[index];
+      const g = data[index + 1];
+      const b = data[index + 2];
+      const brightness = (r * 0.299 + g * 0.587 + b * 0.114) / 255;
+      const charIndex = Math.min(charset.length - 1, Math.floor(brightness * (charset.length - 1)));
+      output += charset[charIndex];
+    }
+    output += '\n';
+  }
+
+  return output;
+}
+
+function stopWebcamAscii(nodeId) {
+  const binding = webcamAsciiBindings.get(nodeId);
+  if (!binding) return;
+
+  if (binding.frameHandle !== null) {
+    window.cancelAnimationFrame(binding.frameHandle);
+    binding.frameHandle = null;
+  }
+
+  if (binding.stream) {
+    binding.stream.getTracks().forEach((track) => track.stop());
+    binding.stream = null;
+  }
+
+  if (binding.video) {
+    binding.video.srcObject = null;
+  }
+
+  if (binding.statusEl) {
+    binding.statusEl.textContent = 'Camera stopped.';
+  }
+}
+
+function bindWebcamAscii(nodeId, windowEl) {
+  const root = windowEl.querySelector('[data-webcam-ascii]');
+  if (!root) return;
+
+  const video = root.querySelector('[data-webcam-video]');
+  const canvas = root.querySelector('[data-webcam-canvas]');
+  const output = root.querySelector('[data-webcam-output]');
+  const statusEl = root.querySelector('[data-webcam-status]');
+  const startButton = root.querySelector('[data-webcam-start]');
+  const stopButton = root.querySelector('[data-webcam-stop]');
+  const context = canvas.getContext('2d', { willReadFrequently: true });
+
+  const binding = {
+    nodeId,
+    root,
+    video,
+    canvas,
+    output,
+    statusEl,
+    startButton,
+    stopButton,
+    context,
+    frameHandle: null,
+    stream: null,
+  };
+
+  const draw = () => {
+    if (!binding.stream || !video.videoWidth || !video.videoHeight) {
+      binding.frameHandle = window.requestAnimationFrame(draw);
+      return;
+    }
+
+    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+    output.textContent = renderAsciiFrame(context, canvas.width, canvas.height);
+    binding.frameHandle = window.requestAnimationFrame(draw);
+  };
+
+  const start = async () => {
+    try {
+      stopWebcamAscii(nodeId);
+      statusEl.textContent = 'Requesting camera…';
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: 'user', width: { ideal: 320 }, height: { ideal: 240 } },
+        audio: false,
+      });
+      binding.stream = stream;
+      video.srcObject = stream;
+      await video.play();
+      statusEl.textContent = 'Live ASCII webcam.';
+      binding.frameHandle = window.requestAnimationFrame(draw);
+    } catch (error) {
+      statusEl.textContent = `Camera unavailable: ${error.message}`;
+    }
+  };
+
+  startButton.addEventListener('click', start);
+  stopButton.addEventListener('click', () => stopWebcamAscii(nodeId));
+
+  webcamAsciiBindings.set(nodeId, binding);
+}
+
 function bindMinesweeper(nodeId, windowEl) {
   const container = windowEl.querySelector('[data-minesweeper]');
   if (!container) return;
@@ -637,6 +759,11 @@ function unbindGooglyEyes(nodeId) {
   googlyEyesBindings.delete(nodeId);
 }
 
+function unbindWebcamAscii(nodeId) {
+  stopWebcamAscii(nodeId);
+  webcamAsciiBindings.delete(nodeId);
+}
+
 function initGooglyEyesTracking() {
   window.addEventListener('pointermove', (event) => {
     eyeState.pointerX = event.clientX;
@@ -668,6 +795,12 @@ function buildExperienceWindow(nodeId) {
     `;
   }
 
+  if (node.experience === 'webcam-ascii') {
+    content.innerHTML = `
+      <div class="window__body window__body--webcam-ascii">${webcamAsciiMarkup()}</div>
+    `;
+  }
+
   applyWindowPlacement(nodeId, windowEl);
   desktop.appendChild(windowEl);
   openWindows.set(nodeId, windowEl);
@@ -681,6 +814,10 @@ function buildExperienceWindow(nodeId) {
 
   if (node.experience === 'minesweeper-lite') {
     bindMinesweeper(nodeId, windowEl);
+  }
+
+  if (node.experience === 'webcam-ascii') {
+    bindWebcamAscii(nodeId, windowEl);
   }
 }
 

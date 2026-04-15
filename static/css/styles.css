@@ -425,6 +425,49 @@ select {
   padding: 0;
 }
 
+.window__body--webcam-ascii {
+  padding: 0.5rem;
+  background: var(--panel-low);
+}
+
+.webcam-ascii {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.webcam-ascii__controls {
+  display: flex;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+}
+
+.webcam-ascii__status {
+  margin: 0;
+  padding: 0.2rem 0.3rem;
+  background: #fff;
+  border: 1px solid var(--panel-deep);
+}
+
+.webcam-ascii__output {
+  min-height: 16rem;
+  margin: 0;
+  padding: 0.55rem;
+  overflow: auto;
+  border: 1px solid var(--panel-deep);
+  background: #111;
+  color: #f1f1f1;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.34rem;
+  line-height: 0.5rem;
+  letter-spacing: 0.02em;
+  white-space: pre;
+}
+
+.webcam-ascii__video,
+.webcam-ascii__canvas {
+  display: none;
+}
+
 .icon-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(5rem, max-content));

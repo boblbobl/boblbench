@@ -9,7 +9,7 @@
       "type": "drawer",
       "icon": "disk",
       "title": "Demos",
-      "children": ["googly-eyes-file", "mines-file"],
+      "children": ["googly-eyes-file", "mines-file", "webcam-ascii-file"],
       "defaultPosition": { "left": 40, "top": 52, "width": "min(29rem, 84vw)" }
     },
     "doc-drawer": {
@@ -99,6 +99,14 @@
       "title": "Mines",
       "experience": "minesweeper-lite",
       "defaultPosition": { "left": 220, "top": 84, "width": "min(20rem, 84vw)" }
+    },
+    "webcam-ascii-file": {
+      "type": "experience",
+      "icon": "file",
+      "iconSize": "regular",
+      "title": "WebcamASCII",
+      "experience": "webcam-ascii",
+      "defaultPosition": { "left": 260, "top": 102, "width": "min(36rem, 92vw)" }
     }
   }
 }
