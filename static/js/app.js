@@ -489,8 +489,7 @@ function webcamAsciiMarkup() {
   return `
     <div class="webcam-ascii" data-webcam-ascii>
       <div class="webcam-ascii__controls">
-        <button class="toolbar-button" type="button" data-webcam-start>Start camera</button>
-        <button class="toolbar-button" type="button" data-webcam-stop>Stop</button>
+        <button class="toolbar-button" type="button" data-webcam-toggle>Start camera</button>
       </div>
       <p class="webcam-ascii__status" data-webcam-status>Ready. Click start and allow camera access.</p>
       <pre class="webcam-ascii__output" data-webcam-output></pre>
@@ -521,6 +520,11 @@ function renderAsciiFrame(context, width, height) {
   return output;
 }
 
+function syncWebcamAsciiToggle(binding) {
+  if (!binding?.toggleButton) return;
+  binding.toggleButton.textContent = binding.stream ? 'Stop camera' : 'Start camera';
+}
+
 function stopWebcamAscii(nodeId) {
   const binding = webcamAsciiBindings.get(nodeId);
   if (!binding) return;
@@ -542,6 +546,8 @@ function stopWebcamAscii(nodeId) {
   if (binding.statusEl) {
     binding.statusEl.textContent = 'Camera stopped.';
   }
+
+  syncWebcamAsciiToggle(binding);
 }
 
 function bindWebcamAscii(nodeId, windowEl) {
@@ -552,8 +558,7 @@ function bindWebcamAscii(nodeId, windowEl) {
   const canvas = root.querySelector('[data-webcam-canvas]');
   const output = root.querySelector('[data-webcam-output]');
   const statusEl = root.querySelector('[data-webcam-status]');
-  const startButton = root.querySelector('[data-webcam-start]');
-  const stopButton = root.querySelector('[data-webcam-stop]');
+  const toggleButton = root.querySelector('[data-webcam-toggle]');
   const context = canvas.getContext('2d', { willReadFrequently: true });
 
   const binding = {
@@ -563,8 +568,7 @@ function bindWebcamAscii(nodeId, windowEl) {
     canvas,
     output,
     statusEl,
-    startButton,
-    stopButton,
+    toggleButton,
     context,
     frameHandle: null,
     stream: null,
@@ -593,15 +597,23 @@ function bindWebcamAscii(nodeId, windowEl) {
       video.srcObject = stream;
       await video.play();
       statusEl.textContent = 'Live ASCII webcam.';
+      syncWebcamAsciiToggle(binding);
       binding.frameHandle = window.requestAnimationFrame(draw);
     } catch (error) {
       statusEl.textContent = `Camera unavailable: ${error.message}`;
+      syncWebcamAsciiToggle(binding);
     }
   };
 
-  startButton.addEventListener('click', start);
-  stopButton.addEventListener('click', () => stopWebcamAscii(nodeId));
+  toggleButton.addEventListener('click', async () => {
+    if (binding.stream) {
+      stopWebcamAscii(nodeId);
+      return;
+    }
+    await start();
+  });
 
+  syncWebcamAsciiToggle(binding);
   webcamAsciiBindings.set(nodeId, binding);
 }
 
