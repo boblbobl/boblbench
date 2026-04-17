@@ -441,6 +441,22 @@ select {
   flex-wrap: wrap;
 }
 
+.webcam-ascii__sliders {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.45rem;
+}
+
+.webcam-ascii__field {
+  display: grid;
+  gap: 0.2rem;
+  font-size: 0.8rem;
+}
+
+.webcam-ascii__field input {
+  width: 100%;
+}
+
 .webcam-ascii__status {
   margin: 0;
   padding: 0.2rem 0.3rem;
@@ -576,6 +592,10 @@ select {
     min-height: 10rem;
     transform: scale(0.9);
     transform-origin: center;
+  }
+
+  .webcam-ascii__sliders {
+    grid-template-columns: 1fr;
   }
 
   .window {

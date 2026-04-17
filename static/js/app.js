@@ -491,6 +491,14 @@ function webcamAsciiMarkup() {
       <div class="webcam-ascii__controls">
         <button class="toolbar-button" type="button" data-webcam-toggle>Start camera</button>
       </div>
+      <div class="webcam-ascii__sliders">
+        <label class="webcam-ascii__field">Brightness
+          <input type="range" min="-100" max="100" value="0" step="1" data-webcam-brightness />
+        </label>
+        <label class="webcam-ascii__field">Contrast
+          <input type="range" min="0.4" max="2.2" value="1" step="0.05" data-webcam-contrast />
+        </label>
+      </div>
       <p class="webcam-ascii__status" data-webcam-status>Ready. Click start and allow camera access.</p>
       <pre class="webcam-ascii__output" data-webcam-output></pre>
       <video class="webcam-ascii__video" data-webcam-video playsinline muted></video>
@@ -499,9 +507,11 @@ function webcamAsciiMarkup() {
   `;
 }
 
-function renderAsciiFrame(context, width, height) {
+function renderAsciiFrame(context, width, height, options = {}) {
   const charset = ' .,:;i1tfLCG08@';
   const { data } = context.getImageData(0, 0, width, height);
+  const brightnessOffset = Number(options.brightnessOffset || 0);
+  const contrast = Number(options.contrast || 1);
   let output = '';
 
   for (let y = 0; y < height; y += 2) {
@@ -510,8 +520,9 @@ function renderAsciiFrame(context, width, height) {
       const r = data[index];
       const g = data[index + 1];
       const b = data[index + 2];
-      const brightness = (r * 0.299 + g * 0.587 + b * 0.114) / 255;
-      const charIndex = Math.min(charset.length - 1, Math.floor(brightness * (charset.length - 1)));
+      const luminance = (r * 0.299 + g * 0.587 + b * 0.114) / 255;
+      const adjusted = Math.min(1, Math.max(0, ((luminance - 0.5) * contrast) + 0.5 + (brightnessOffset / 255)));
+      const charIndex = Math.min(charset.length - 1, Math.floor(adjusted * (charset.length - 1)));
       output += charset[charIndex];
     }
     output += '\n';
@@ -559,6 +570,8 @@ function bindWebcamAscii(nodeId, windowEl) {
   const output = root.querySelector('[data-webcam-output]');
   const statusEl = root.querySelector('[data-webcam-status]');
   const toggleButton = root.querySelector('[data-webcam-toggle]');
+  const brightnessInput = root.querySelector('[data-webcam-brightness]');
+  const contrastInput = root.querySelector('[data-webcam-contrast]');
   const context = canvas.getContext('2d', { willReadFrequently: true });
 
   const binding = {
@@ -569,6 +582,8 @@ function bindWebcamAscii(nodeId, windowEl) {
     output,
     statusEl,
     toggleButton,
+    brightnessInput,
+    contrastInput,
     context,
     frameHandle: null,
     stream: null,
@@ -581,7 +596,10 @@ function bindWebcamAscii(nodeId, windowEl) {
     }
 
     context.drawImage(video, 0, 0, canvas.width, canvas.height);
-    output.textContent = renderAsciiFrame(context, canvas.width, canvas.height);
+    output.textContent = renderAsciiFrame(context, canvas.width, canvas.height, {
+      brightnessOffset: binding.brightnessInput?.value || 0,
+      contrast: binding.contrastInput?.value || 1,
+    });
     binding.frameHandle = window.requestAnimationFrame(draw);
   };
 
