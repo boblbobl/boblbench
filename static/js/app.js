@@ -491,6 +491,8 @@ function webcamAsciiMarkup() {
       <div class="webcam-ascii__controls">
         <button class="toolbar-button" type="button" data-webcam-toggle>Start camera</button>
       </div>
+      <p class="webcam-ascii__status" data-webcam-status>Ready. Click start and allow camera access.</p>
+      <pre class="webcam-ascii__output" data-webcam-output></pre>
       <div class="webcam-ascii__sliders">
         <label class="webcam-ascii__field">Brightness
           <input type="range" min="-100" max="100" value="0" step="1" data-webcam-brightness />
@@ -499,8 +501,6 @@ function webcamAsciiMarkup() {
           <input type="range" min="0.4" max="2.2" value="1" step="0.05" data-webcam-contrast />
         </label>
       </div>
-      <p class="webcam-ascii__status" data-webcam-status>Ready. Click start and allow camera access.</p>
-      <pre class="webcam-ascii__output" data-webcam-output></pre>
       <video class="webcam-ascii__video" data-webcam-video playsinline muted></video>
       <canvas class="webcam-ascii__canvas" data-webcam-canvas width="96" height="64"></canvas>
     </div>
